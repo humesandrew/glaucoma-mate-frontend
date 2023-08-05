@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+
 
 export default function App() {
   return (
@@ -8,6 +9,13 @@ export default function App() {
       <View style={styles.main}>
         <Text style={styles.title}>Hello world!</Text>
         <Text style={styles.subtitle}>This is glaucoma-mate.</Text>
+        <View style={styles.formContainer}>
+          <Text>Email</Text>
+        <TextInput style={styles.input}></TextInput>
+        <Text>Password</Text>
+        <TextInput style={styles.input}></TextInput>
+        </View>
+      
       </View>
       <StatusBar style="auto" />
     </View>
@@ -20,6 +28,10 @@ const styles = StyleSheet.create({
     padding: 24,
     alignItems: 'center',
   },
+  formContainer: {
+    alignItems: 'center', 
+    marginTop: 20
+  },
   main: {
     flex: 1,
     justifyContent: 'center',
@@ -30,5 +42,13 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontStyle: 'italic'
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#777',
+    padding: 8,
+    margin: 10,
+    width: 200
+
   }
 });
