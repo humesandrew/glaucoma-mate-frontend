@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
-
+import { StyleSheet, Text, View, Button, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import Header from './components/Header';
 
 export default function App() {
   const [email, setEmail] = useState('Email');
   const [password, setPassword] = useState("Password");
 
   return (
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+    }}>
     <View style={styles.container}>
+     <Header />
       <View style={styles.main}>
         <Text style={styles.title}>Hello world!</Text>
         <Text style={styles.subtitle}>This is glaucoma-mate.</Text>
@@ -30,14 +34,16 @@ export default function App() {
       </View>
       <StatusBar style="auto" />
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
+    padding: 0,
     alignItems: 'center',
+    justifyContent: 'center'
   },
   formContainer: {
     alignItems: 'center', 
