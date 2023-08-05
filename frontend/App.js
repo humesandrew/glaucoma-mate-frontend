@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 
 
 export default function App() {
+  const [email, setEmail] = useState('Email');
+  const [password, setPassword] = useState("Password");
+
   return (
     <View style={styles.container}>
       <View style={styles.main}>
@@ -11,9 +14,17 @@ export default function App() {
         <Text style={styles.subtitle}>This is glaucoma-mate.</Text>
         <View style={styles.formContainer}>
           <Text>Email</Text>
-        <TextInput style={styles.input}></TextInput>
+        <TextInput 
+        style={styles.input}
+        onChangeText={(val) => setEmail(val)} />
         <Text>Password</Text>
-        <TextInput style={styles.input}></TextInput>
+        <TextInput 
+        style={styles.input}
+        onChangeText={(val) => setPassword(val)} />
+
+      
+        <Text>Email entered: {email}</Text>
+        <Text>Password entered: {password}</Text>
         </View>
       
       </View>
@@ -48,7 +59,7 @@ const styles = StyleSheet.create({
     borderColor: '#777',
     padding: 8,
     margin: 10,
-    width: 200
+    width: 300
 
   }
 });
