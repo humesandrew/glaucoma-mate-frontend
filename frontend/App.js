@@ -9,47 +9,21 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import Header from "./components/Header";
-import Home from "./screens/home";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Home from "./screens/Home.js";
+import Doses from "./screens/Doses.js";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [email, setEmail] = useState("Email");
-  const [password, setPassword] = useState("Password");
-
   return (
-  
-      <Home />
-   
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Doses" component={Doses} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 0,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  formContainer: {
-    alignItems: "center",
-    marginTop: 20,
-  },
-  main: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  title: {
-    fontWeight: "bold",
-    fontSize: 50,
-  },
-  subtitle: {
-    fontStyle: "italic",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#777",
-    padding: 8,
-    margin: 10,
-    width: 300,
-  },
-});

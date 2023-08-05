@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TextInput, TouchableWithoutFeedback,
     Keyboard, } from "react-native";
 import Header from "../components/Header";
 
-export default function App() {
+export default function Home() {
   const [email, setEmail] = useState("Email");
   const [password, setPassword] = useState("Password");
 
