@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TextInput, TouchableWithoutFeedback,
     Keyboard, } from "react-native";
 import Header from "../components/Header";
 
-export default function App() {
+export default function Home() {
   const [email, setEmail] = useState("Email");
   const [password, setPassword] = useState("Password");
 
@@ -15,7 +15,7 @@ export default function App() {
     }}
   >
     <View style={styles.container}>
-      <Header />
+     
       <View style={styles.main}>
         <Text style={styles.title}>Welcome</Text>
         <Text style={styles.subtitle}>This is glaucoma-mate</Text>
@@ -34,7 +34,9 @@ export default function App() {
           <Text>Email entered: {email}</Text>
           <Text>Password entered: {password}</Text>
         </View>
+        
       </View>
+      <Header />
       <StatusBar style="auto" />
     </View>
     </TouchableWithoutFeedback>
