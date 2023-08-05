@@ -15,7 +15,7 @@ export default function Home() {
     }}
   >
     <View style={styles.container}>
-      <Header />
+     
       <View style={styles.main}>
         <Text style={styles.title}>Welcome</Text>
         <Text style={styles.subtitle}>This is glaucoma-mate</Text>
@@ -34,7 +34,9 @@ export default function Home() {
           <Text>Email entered: {email}</Text>
           <Text>Password entered: {password}</Text>
         </View>
+        
       </View>
+      <Header />
       <StatusBar style="auto" />
     </View>
     </TouchableWithoutFeedback>

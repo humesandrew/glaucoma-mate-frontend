@@ -1,29 +1,12 @@
-import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TextInput,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
+// App.js
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Home from "./screens/Home.js";
-import Doses from "./screens/Doses.js";
-
-const Stack = createNativeStackNavigator();
+import HomeStack from './routes/HomeStack.js';
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Doses" component={Doses} />
-      </Stack.Navigator>
+      <HomeStack />
     </NavigationContainer>
   );
 }
-
