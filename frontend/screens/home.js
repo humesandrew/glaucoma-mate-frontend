@@ -1,48 +1,60 @@
 import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, TextInput, TouchableWithoutFeedback,
-    Keyboard, } from "react-native";
+import {
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity, // Import TouchableOpacity
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import Header from "../components/Header";
 
 export default function Home() {
-  const [email, setEmail] = useState("Email");
-  const [password, setPassword] = useState("Password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = () => {
+    console.log(email, password);
+    // Handle form submission logic here
+  };
 
   return (
     <TouchableWithoutFeedback
-    onPress={() => {
-      Keyboard.dismiss();
-    }}
-  >
-    <View style={styles.container}>
-     
-      <View style={styles.main}>
-        <Text style={styles.title}>Welcome</Text>
-        <Text style={styles.subtitle}>This is glaucoma-mate</Text>
-        <View style={styles.formContainer}>
-          <Text>Email</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={(val) => setEmail(val)}
-          />
-          <Text>Password</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={(val) => setPassword(val)}
-          />
-
-          <Text>Email entered: {email}</Text>
-          <Text>Password entered: {password}</Text>
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View style={styles.container}>
+        <View style={styles.main}>
+          <Text style={styles.title}>Welcome</Text>
+          <Text style={styles.subtitle}>This is glaucoma-mate</Text>
+          <View style={styles.formContainer}>
+            <Text>Email</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={(val) => setEmail(val)}
+            />
+            <Text>Password</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={(val) => setPassword(val)}
+              secureTextEntry // For password fields
+            />
+            <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+            <Text>Email entered: {email}</Text>
+            <Text>Password entered: {password}</Text>
+          </View>
         </View>
-        
+        <Header />
+        <StatusBar style="auto" />
       </View>
-      <Header />
-      <StatusBar style="auto" />
-    </View>
     </TouchableWithoutFeedback>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -71,5 +83,16 @@ const styles = StyleSheet.create({
     padding: 8,
     margin: 10,
     width: 300,
+  },
+  button: {
+    backgroundColor: "blue",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
