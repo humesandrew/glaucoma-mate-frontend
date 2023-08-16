@@ -8,17 +8,18 @@ export const useLogin = () => {
    const { dispatch } = useAuthContext();
 
    const login = async (email, password) => { 
+    console.log('Starting login...');
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch('./api/user/login', {
+      const response = await fetch('https://glaucoma-mate-backend.onrender.com/api/user/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', 
           },
           body: JSON.stringify({ email, password }),
       });
-
+      console.log('Response:', response);
       const json = await response.json();
 
       if (!response.ok) {
@@ -28,6 +29,7 @@ export const useLogin = () => {
 
       if (response.ok) {
           localStorage.setItem('user', JSON.stringify(json));
+          console.log('Login successful:', json);
           dispatch({ type: 'LOGIN', payload: json });
           setIsLoading(false);
       }
