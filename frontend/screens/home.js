@@ -5,19 +5,22 @@ import {
   Text,
   View,
   TextInput,
-  TouchableOpacity, // Import TouchableOpacity
+  TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
 import Header from "../components/Header";
+import { useLogin } from "../hooks/useLogin"; // Import your useLogin hook
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { login, isLoading, error } = useLogin(); // Initialize the hook
+
   const handleSubmit = () => {
-    console.log(email, password);
-    // Handle form submission logic here
+    // Call the login function here
+    login(email, password);
   };
 
   return (
@@ -42,11 +45,18 @@ export default function Home() {
               onChangeText={(val) => setPassword(val)}
               secureTextEntry // For password fields
             />
-            <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-              <Text style={styles.buttonText}>Login</Text>
+            <TouchableOpacity
+              onPress={handleSubmit}
+              style={styles.button}
+              disabled={isLoading} // Disable the button while loading
+            >
+              <Text style={styles.buttonText}>
+                {isLoading ? "Logging In..." : "Login"}
+              </Text>
             </TouchableOpacity>
             <Text>Email entered: {email}</Text>
             <Text>Password entered: {password}</Text>
+            {error && <Text style={styles.errorText}>{error}</Text>}
           </View>
         </View>
         <Header />
@@ -94,5 +104,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  errorText: {
+    color: "red",
+    marginTop: 10,
   },
 });
