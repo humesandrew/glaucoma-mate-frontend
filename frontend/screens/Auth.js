@@ -20,9 +20,11 @@ export default function Home() {
   const { login, isLoading, error } = useLogin(); // Initialize the hook
 const { logout } = useLogout();
 
-const handleLogout = () => {
-  logout()
-}
+// const handleLogout = () => {
+//   logout()
+// }
+
+
   const handleSubmit = () => {
     // Call the login function here
     login(email, password);
