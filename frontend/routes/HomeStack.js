@@ -1,18 +1,18 @@
-// homeStack.js
+// authStack.js
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Home from '../screens/home.js';
+import Auth from '../screens/Auth.js';
 import Doses from '../screens/Doses';
 
 const Stack = createNativeStackNavigator();
 
-const HomeStack = () => {
+const AuthStack = () => {
   return (
-    <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" component={Home} />
+    <Stack.Navigator initialRouteName="Signin">
+      <Stack.Screen name="Signin" component={Auth} />
       <Stack.Screen name="Doses" component={Doses} />
     </Stack.Navigator>
   );
 };
 
-export default HomeStack;
+export default AuthStack;
