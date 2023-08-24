@@ -11,13 +11,18 @@ import {
 } from "react-native";
 import Header from "../components/Header";
 import { useLogin } from "../hooks/useLogin"; // Import your useLogin hook
+import { useLogout } from "../hooks/useLogout"; // Import your useLogin hook
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const { login, isLoading, error } = useLogin(); // Initialize the hook
+const { logout } = useLogout();
 
+const handleLogout = () => {
+  logout()
+}
   const handleSubmit = () => {
     // Call the login function here
     login(email, password);
@@ -54,6 +59,15 @@ export default function Home() {
                 {isLoading ? "Logging In..." : "Login"}
               </Text>
             </TouchableOpacity>
+            {/* <TouchableOpacity
+              onPress={handleLogout}
+              style={styles.button}
+              disabled={isLoading} // Disable the button while loading
+            >
+              <Text style={styles.buttonText}>
+                {isLoading ? "Logging out..." : "Logout"}
+              </Text> */}
+            {/* </TouchableOpacity> */}
             <Text>Email entered: {email}</Text>
             <Text>Password entered: {password}</Text>
             {error && <Text style={styles.errorText}>{error}</Text>}
