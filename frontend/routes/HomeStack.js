@@ -2,7 +2,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Auth from '../screens/Auth.js';
-import Doses from '../screens/Doses';
+import Doses from '../screens/Doses.js';
 
 const Stack = createNativeStackNavigator();
 
