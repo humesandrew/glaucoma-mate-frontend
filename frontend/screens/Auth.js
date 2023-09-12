@@ -13,7 +13,7 @@ import Header from "../components/Header";
 import { useLogin } from "../hooks/useLogin"; // Import your useLogin hook
 import { useLogout } from "../hooks/useLogout"; // Import your useLogin hook
 
-export default function Home() {
+export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
