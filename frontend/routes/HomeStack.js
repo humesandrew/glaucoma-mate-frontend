@@ -6,7 +6,7 @@ import Doses from '../screens/Doses.js';
 
 const Stack = createNativeStackNavigator();
 
-const AuthStack = () => {
+const HomeStack = () => {
   return (
     <Stack.Navigator initialRouteName="Signin">
       <Stack.Screen name="Signin" component={Auth} />
@@ -15,4 +15,4 @@ const AuthStack = () => {
   );
 };
 
-export default AuthStack;
+export default HomeStack;
