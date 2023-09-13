@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
 import Header from "../components/Header";
 import { useLogin } from "../hooks/useLogin"; // Import your useLogin hook
 import { useLogout } from "../hooks/useLogout"; // Import your useLogin hook
@@ -18,17 +19,30 @@ export default function Auth() {
   const [password, setPassword] = useState("");
 
   const { login, isLoading, error } = useLogin(); // Initialize the hook
-const { logout } = useLogout();
+  const { logout } = useLogout();
 
-// const handleLogout = () => {
-//   logout()
-// }
-
-
-  const handleSubmit = () => {
-    // Call the login function here
-    login(email, password);
+  // Get the navigation object
+  const navigation = useNavigation();
+  const handleSubmit = async () => {
+    try {
+      // Call the login function here
+      await login(email, password);
+  
+      // Check if there is a user object in local storage
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log('User from local storage:', user);
+  
+      if (user && user.email && user.token) {
+        // Navigate to the Doses screen
+        console.log('Navigating to Doses screen');
+        navigation.navigate("Doses");
+      }
+    } catch (error) {
+      console.error('Login failed with error:', error);
+    }
   };
+  
+  
 
   return (
     <TouchableWithoutFeedback
@@ -61,15 +75,6 @@ const { logout } = useLogout();
                 {isLoading ? "Logging In..." : "Login"}
               </Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity
-              onPress={handleLogout}
-              style={styles.button}
-              disabled={isLoading} // Disable the button while loading
-            >
-              <Text style={styles.buttonText}>
-                {isLoading ? "Logging out..." : "Logout"}
-              </Text> */}
-            {/* </TouchableOpacity> */}
             <Text>Email entered: {email}</Text>
             <Text>Password entered: {password}</Text>
             {error && <Text style={styles.errorText}>{error}</Text>}
@@ -81,6 +86,7 @@ const { logout } = useLogout();
     </TouchableWithoutFeedback>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -20,14 +20,10 @@ const HomeStack = () => {
   }, []);
 
   return (
-    <Stack.Navigator initialRouteName="Welcome">
-      {isLoggedIn ? (
-        <Stack.Screen name="Doses" component={Doses} />
-      ) : (
-        <Stack.Screen name="Signin" component={Auth} />
-      )}
+    <Stack.Navigator initialRouteName={isLoggedIn ? 'Doses' : 'Signin'}>
+      <Stack.Screen name="Signin" component={Auth} />
+      <Stack.Screen name="Doses" component={Doses} />
     </Stack.Navigator>
   );
 };
-
 export default HomeStack;
