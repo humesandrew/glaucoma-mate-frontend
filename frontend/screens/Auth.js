@@ -27,22 +27,20 @@ export default function Auth() {
     try {
       // Call the login function here
       await login(email, password);
-  
+
       // Check if there is a user object in local storage
       const user = JSON.parse(localStorage.getItem("user"));
-      console.log('User from local storage:', user);
-  
+      console.log("User from local storage:", user);
+
       if (user && user.email && user.token) {
         // Navigate to the Doses screen
-        console.log('Navigating to Doses screen');
+        console.log("Navigating to Doses screen");
         navigation.navigate("Doses");
       }
     } catch (error) {
-      console.error('Login failed with error:', error);
+      console.error("Login failed with error:", error);
     }
   };
-  
-  
 
   return (
     <TouchableWithoutFeedback

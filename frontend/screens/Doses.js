@@ -1,15 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import Header from "../components/Header";
 
 export default function Doses() {
+  // Define user state
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Retrieve the user object from local storage
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser && storedUser.email) {
+      // Set the user state
+      setUser(storedUser);
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       <Header />
-      <View style={styles.main}>
-        <Text style={styles.title}>Doses</Text>
-        <Text style={styles.subtitle}>This will be doses</Text>
+      <View style={styles.topContent}>
+        <Text style={styles.title}>Welcome back</Text>
+        {/* Display the user's email */}
+        <Text style={styles.subtitle}>{user ? user.email : ""}</Text>
+      </View>
+      <View style={styles.centerContent}>
+        <Text style={styles.doseTitle}>Doses Taken</Text>
+      </View>
+      <View style={styles.bottomContent}>
+        <View style={styles.doseBox}>
+          <Text>Latanoprost</Text>
+        </View>
       </View>
       <StatusBar style="auto" />
     </View>
@@ -21,15 +42,21 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 0,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-around",
   },
-  formContainer: {
-    alignItems: "center",
-    marginTop: 20,
-  },
-  main: {
+  topContent: {
     flex: 1,
     justifyContent: "center",
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: "center", // Center the text vertically
+    marginTop: 50
+  },
+  bottomContent: {
+    flex: 1,
+    justifyContent: "flex-end",
+    paddingBottom: 300, // Add padding to create space
   },
   title: {
     fontWeight: "bold",
@@ -38,9 +65,15 @@ const styles = StyleSheet.create({
   subtitle: {
     fontStyle: "italic",
   },
-  input: {
-    borderWidth: 1,
-    borderColor: "#777",
+  doseTitle: {
+    fontWeight: "bold",
+    fontSize: 30,
+  },
+  doseBox: {
+    borderWidth: 2,
+    borderRadius: 25,
+    borderColor: "blue",
+    backgroundColor: "lightblue",
     padding: 8,
     margin: 10,
     width: 300,
