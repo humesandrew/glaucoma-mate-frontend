@@ -6,16 +6,43 @@ import Header from "../components/Header";
 export default function Doses() {
   // Define user state
   const [user, setUser] = useState(null);
+  const [medications, setMedications] = useState([]); // Initialize medications state
 
   useEffect(() => {
-    // Retrieve the user object from local storage
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser && storedUser.email) {
-      // Set the user state
-      setUser(storedUser);
-    }
-  }, []);
+    const fetchMedications = async () => {
+      try {
+        // Retrieve the user object from local storage
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        if (storedUser && storedUser.email) {
+          // Set the user state
+          setUser(storedUser);
 
+          // Make a request to your backend to get medications assigned to the user
+          const response = await fetch(
+            "https://glaucoma-mate-backend.onrender.com/api/medications/assigned",
+            {
+              headers: {
+                Authorization: `Bearer ${storedUser.token}`, // Include the user's token for authentication
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            setMedications(data);
+            console.log(data);
+          } else {
+            console.error("Error fetching medications:", response.statusText);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching medications:", error.message);
+      }
+    };
+
+    fetchMedications();
+  }, []);
   return (
     <View style={styles.container}>
       <Header />

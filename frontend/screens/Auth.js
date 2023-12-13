@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native"; // Import useNavigatio
 import Header from "../components/Header";
 import { useLogin } from "../hooks/useLogin"; // Import your useLogin hook
 import { useLogout } from "../hooks/useLogout"; // Import your useLogin hook
+import {AsyncStorage} from 'react-native';
 
 export default function Auth() {
   const [email, setEmail] = useState("");
