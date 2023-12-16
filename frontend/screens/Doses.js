@@ -1,28 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import Header from "../components/Header";
+import { useLogout } from "../hooks/useLogout";
 
 export default function Doses() {
-  // Define user state
   const [user, setUser] = useState(null);
-  const [medications, setMedications] = useState([]); // Initialize medications state
+  const [medications, setMedications] = useState([]);
+ 
 
   useEffect(() => {
     const fetchMedications = async () => {
       try {
-        // Retrieve the user object from local storage
         const storedUser = JSON.parse(localStorage.getItem("user"));
         if (storedUser && storedUser.email) {
-          // Set the user state
           setUser(storedUser);
 
-          // Make a request to your backend to get medications assigned to the user
           const response = await fetch(
             "https://glaucoma-mate-backend.onrender.com/api/medications/assigned",
             {
               headers: {
-                Authorization: `Bearer ${storedUser.token}`, // Include the user's token for authentication
+                Authorization: `Bearer ${storedUser.token}`,
                 "Content-Type": "application/json",
               },
             }
@@ -31,7 +29,6 @@ export default function Doses() {
           if (response.ok) {
             const data = await response.json();
             setMedications(data);
-            console.log(data);
           } else {
             console.error("Error fetching medications:", response.statusText);
           }
@@ -43,12 +40,15 @@ export default function Doses() {
 
     fetchMedications();
   }, []);
+
   return (
     <View style={styles.container}>
       <Header />
       <View style={styles.topContent}>
         <Text style={styles.title}>Welcome back</Text>
-        {/* Display the user's email */}
+        <TouchableOpacity>
+          <Text style={styles.logoutButton}>Logout</Text>
+        </TouchableOpacity>
         <Text style={styles.subtitle}>{user ? user.email : ""}</Text>
       </View>
       <View style={styles.centerContent}>
@@ -104,5 +104,10 @@ const styles = StyleSheet.create({
     padding: 8,
     margin: 10,
     width: 300,
+  },
+  logoutButton: {
+    color: "blue",
+    textDecorationLine: "underline",
+    marginTop: 10,
   },
 });
