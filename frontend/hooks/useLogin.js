@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useAuthContext } from './useAuthContext'; 
 
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase.js';
+
 export const useLogin = () => {
    
    const [error, setError] = useState(null);
@@ -28,6 +31,11 @@ export const useLogin = () => {
       }
 
       if (response.ok) {
+        signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+console.log(userCredential);
+ console.log('hello');
+        }).catch((error) => {console.log(error)});
           localStorage.setItem('user', JSON.stringify(json));
           console.log('Login successful:', json);
           dispatch({ type: 'LOGIN', payload: json });
