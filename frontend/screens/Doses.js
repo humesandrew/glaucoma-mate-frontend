@@ -1,64 +1,63 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useAuthContext } from '../hooks/useAuthContext.js';
+
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import Header from "../components/Header";
 
 export default function Doses() {
-  // Define user state
-  const [user, setUser] = useState(null);
+  const { user } = useAuthContext; // Access user data from AuthContext
   const [medications, setMedications] = useState([]); // Initialize medications state
 
   useEffect(() => {
     const fetchMedications = async () => {
       try {
-        // Retrieve the user object from local storage
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        if (storedUser && storedUser.email) {
-          // Set the user state
-          setUser(storedUser);
-
+        if (user && user.email) {
           // Make a request to your backend to get medications assigned to the user
-
           const response = await fetch(
             "https://glaucoma-mate-backend.onrender.com/api/medications/assigned",
             {
               headers: {
-                Authorization: `Bearer ${storedUser.token}`,
+                Authorization: `Bearer ${user.token}`,
                 // Include the user's token for authentication
                 "Content-Type": "application/json",
-              },},);
-
-              if (response.ok) {
-                const data = await response.json();
-                setMedications(data);
-                console.log(data);
-              } else {
-                console.error("Error fetching medications:", response.statusText);
-              }
+              },
             }
-          } catch (error) {
-            console.error("Error fetching medications:", error.message);
-          }
-        };
+          );
 
-        fetchMedications();
-  }, []);
+          if (response.ok) {
+            const data = await response.json();
+            setMedications(data);
+            console.log(data);
+          } else {
+            console.error("Error fetching medications:", response.statusText);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching medications:", error.message);
+      }
+    };
+
+    fetchMedications();
+  }, [user]); // Include user in the dependency array to fetch medications when user changes
 
   return (
     <View style={styles.container}>
       <Header />
       <View style={styles.topContent}>
         <Text style={styles.title}>Welcome back</Text>
-     {/* Display the user's email */}
+        {/* Display the user's email */}
         <Text style={styles.subtitle}>{user ? user.email : ""}</Text>
       </View>
       <View style={styles.centerContent}>
         <Text style={styles.doseTitle}>Doses Taken</Text>
       </View>
       <View style={styles.bottomContent}>
-        <View style={styles.doseBox}>
-          <Text>Latanoprost</Text>
-        </View>
+        {medications.map((medication, index) => (
+          <View style={styles.doseBox} key={index}>
+            <Text>{medication.name}</Text>
+          </View>
+        ))}
       </View>
       <StatusBar style="auto" />
     </View>
