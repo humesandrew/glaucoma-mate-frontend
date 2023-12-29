@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   StatusBar,
   StyleSheet,
@@ -12,8 +12,8 @@ import {
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
 import Header from "../components/Header";
 import { useLogin } from "../hooks/useLogin"; // Import your useLogin hook
-import { useLogout } from "../hooks/useLogout"; // Import your useLogin hook
-
+import { useLogout } from "../hooks/useLogout"; // Import your useLogout hook
+import { AuthContext } from "../context/AuthContext";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -21,19 +21,20 @@ export default function Auth() {
 
   const { login, isLoading, error } = useLogin(); // Initialize the hook
   const { logout } = useLogout();
+  const { dispatch } = useContext(AuthContext); // Access setUser function from AuthContext
 
   // Get the navigation object
   const navigation = useNavigation();
+
   const handleSubmit = async () => {
     try {
       // Call the login function here
-      await login(email, password);
+      const user = await login(email, password);
 
-      // Check if there is a user object in local storage
-      const user = JSON.parse(localStorage.getItem("user"));
-      console.log("User from local storage:", user);
+      if (user) {
+        // Set the user in AuthContext
+        dispatch({ type: "LOGIN", payload: user });
 
-      if (user && user.email && user.token) {
         // Navigate to the Doses screen
         console.log("Navigating to Doses screen");
         navigation.navigate("Doses");
@@ -85,6 +86,8 @@ export default function Auth() {
     </TouchableWithoutFeedback>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
