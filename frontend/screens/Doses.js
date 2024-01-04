@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useAuthContext } from '../hooks/useAuthContext.js';
+import { useAuthContext } from "../hooks/useAuthContext.js";
+import { useLogout } from "../hooks/useLogout.js";
 
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Header from "../components/Header";
 
 export default function Doses() {
   const { user } = useAuthContext; // Access user data from AuthContext
+  const { logout } = useLogout();
   const [medications, setMedications] = useState([]); // Initialize medications state
+
+  const handleLogout = async () => {
+    await logout(); // Call the logout function
+    // Additional logic after logout if needed
+  };
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -52,6 +59,9 @@ export default function Doses() {
       <View style={styles.centerContent}>
         <Text style={styles.doseTitle}>Doses Taken</Text>
       </View>
+      <TouchableOpacity onPress={handleLogout}>
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
       <View style={styles.bottomContent}>
         {medications.map((medication, index) => (
           <View style={styles.doseBox} key={index}>
@@ -63,7 +73,6 @@ export default function Doses() {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -79,7 +88,7 @@ const styles = StyleSheet.create({
   centerContent: {
     flex: 1,
     justifyContent: "center", // Center the text vertically
-    marginTop: 50
+    marginTop: 50,
   },
   bottomContent: {
     flex: 1,

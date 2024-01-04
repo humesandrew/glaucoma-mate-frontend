@@ -1,7 +1,7 @@
 // useLogin.js
 import { useState } from 'react';
 import { useAuthContext } from './useAuthContext';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase.js';
 
 export const useLogin = () => {
@@ -14,9 +14,28 @@ export const useLogin = () => {
     setError(null);
 
     try {
-      // Use Firebase to authenticate the user
+      // Check if the user is already authenticated with Firebase
+      const user = auth.currentUser;
+
+      if (user) {
+        // User is already logged in via Firebase
+        const userData = {
+          firebaseUser: {
+            uid: user.uid,
+            email: user.email,
+            // Add other necessary user data from Firebase
+          },
+        };
+
+        // Dispatch login action
+        dispatch({ type: 'LOGIN', payload: userData });
+        setIsLoading(false);
+        return;
+      }
+
+      // User is not logged in via Firebase, proceed with authentication
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      const firebaseUser = userCredential.user;
 
       // Fetch additional user information from your backend
       const response = await fetch('https://glaucoma-mate-backend.onrender.com/api/user/login', {
@@ -39,8 +58,8 @@ export const useLogin = () => {
       const userData = {
         ...json,
         firebaseUser: {
-          uid: user.uid,
-          email: user.email,
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
           // Add other necessary user data from Firebase
         },
       };
