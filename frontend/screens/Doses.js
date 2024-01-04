@@ -7,7 +7,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Header from "../components/Header";
 
 export default function Doses() {
-  const { user } = useAuthContext; // Access user data from AuthContext
+  const { user } = useAuthContext(); // Access user data from AuthContext
   const { logout } = useLogout();
   const [medications, setMedications] = useState([]); // Initialize medications state
 
@@ -18,6 +18,7 @@ export default function Doses() {
 
   useEffect(() => {
     const fetchMedications = async () => {
+      console.log("User:", user);
       try {
         if (user && user.email) {
           // Make a request to your backend to get medications assigned to the user
