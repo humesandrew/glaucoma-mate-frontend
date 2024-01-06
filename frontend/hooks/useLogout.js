@@ -25,6 +25,7 @@ export const useLogout = () => {
       auth.onAuthStateChanged((user) => {
         if (!user) {
           console.log("Firebase user is signed out");
+          console.log(auth);
         } else {
           console.log("Firebase user is still signed in");
         }
