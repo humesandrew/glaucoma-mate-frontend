@@ -22,35 +22,16 @@ export default function Doses() {
     const fetchMedications = async () => {
       console.log("User:", user);
       console.log("Firebase Auth Status:", auth.currentUser);
-    const firebaseData = auth.currentUser.uid;
-    console.log("uid:", firebaseData);
-      try {
-        if (user && user.email) {
-          // Make a request to your backend to get medications assigned to the user
-          const response = await fetch(
-            "https://glaucoma-mate-backend.onrender.com/api/medications/assigned",
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-                // Include the user's token for authentication
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          if (response.ok) {
-            const data = await response.json();
-            setMedications(data);
-            console.log(data);
-          } else {
-            console.error("Error fetching medications:", response.statusText);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching medications:", error.message);
+    // const firebaseData = auth.currentUser.uid;
+    // console.log("uid:", firebaseData);
+    try {
+      if (auth.currentUser) {
+        console.log(auth.currentUser);  // Add auth before currentUser
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching medications:", error.message);
+    }
+  };
     fetchMedications();
   }, [user]); // Include user in the dependency array to fetch medications when user changes
 
