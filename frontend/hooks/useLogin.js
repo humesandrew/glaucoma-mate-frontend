@@ -26,7 +26,7 @@ export const useLogin = () => {
             // Add other necessary user data from Firebase
           },
         };
-
+console.log(userData);
         // Dispatch login action
         dispatch({ type: 'LOGIN', payload: userData });
         setIsLoading(false);

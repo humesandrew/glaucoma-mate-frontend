@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
+import { auth } from '../firebase.js';
+
 import { useAuthContext } from "../hooks/useAuthContext.js";
 import { useLogout } from "../hooks/useLogout.js";
 
@@ -19,6 +21,9 @@ export default function Doses() {
   useEffect(() => {
     const fetchMedications = async () => {
       console.log("User:", user);
+      console.log("Firebase Auth Status:", auth.currentUser);
+    const firebaseData = auth.currentUser.uid;
+    console.log("uid:", firebaseData);
       try {
         if (user && user.email) {
           // Make a request to your backend to get medications assigned to the user
