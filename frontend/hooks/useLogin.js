@@ -39,7 +39,7 @@ export const useLogin = () => {
 
       // Obtain the Firebase authentication token
       const authToken = await userCredential.user.getIdToken();
-     
+     console.log(authToken);
       // Send the authentication token to your backend for validation
       const response = await fetch('https://glaucoma-mate-backend.onrender.com/api/user/login', {
         method: 'POST',
