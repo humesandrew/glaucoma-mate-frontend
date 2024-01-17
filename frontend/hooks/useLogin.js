@@ -26,7 +26,7 @@ export const useLogin = () => {
             // Add other necessary user data from Firebase
           },
         };
-console.log(userData);
+
         // Dispatch login action
         dispatch({ type: 'LOGIN', payload: userData });
         setIsLoading(false);
@@ -37,11 +37,15 @@ console.log(userData);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const firebaseUser = userCredential.user;
 
-      // Fetch additional user information from your backend
+      // Obtain the Firebase authentication token
+      const authToken = await userCredential.user.getIdToken();
+     
+      // Send the authentication token to your backend for validation
       const response = await fetch('https://glaucoma-mate-backend.onrender.com/api/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`, // Include the token in the request headers
         },
         body: JSON.stringify({ email, password }),
       });
