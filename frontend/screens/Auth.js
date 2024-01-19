@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   StatusBar,
   StyleSheet,
@@ -9,34 +9,46 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
+import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
-import { useLogin } from "../hooks/useLogin"; // Import your useLogin hook
-import { useLogout } from "../hooks/useLogout"; // Import your useLogout hook
+import { useLogin } from "../hooks/useLogin";
 import { AuthContext } from "../context/AuthContext";
+import { auth } from '../firebase.js';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { login, isLoading, error } = useLogin(); // Initialize the hook
-  const { logout } = useLogout();
-  const { dispatch } = useContext(AuthContext); // Access setUser function from AuthContext
-
-  // Get the navigation object
+  const { login, isLoading, error } = useLogin();
+  const { dispatch } = useContext(AuthContext);
   const navigation = useNavigation();
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // User is signed in.
+        dispatch({ type: "LOGIN", payload: user });
+        console.log("Firebase Token:", user.firebaseToken);
+        navigation.navigate("Doses");
+      } else {
+        // User is signed out.
+        console.log("No user is signed in.");
+      }
+    });
+  
+    // Cleanup the listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
+  
   const handleSubmit = async () => {
     try {
-      // Call the login function here
-      const user = await login(email, password);
+      const userCredential = await login(email, password);
+      const user = userCredential.firebaseUser;
 
       if (user) {
-        // Set the user in AuthContext
         dispatch({ type: "LOGIN", payload: user });
-
-        // Navigate to the Doses screen
-        console.log("Navigating to Doses screen");
+        console.log("Firebase Token:", user.firebaseToken);
         navigation.navigate("Doses");
       }
     } catch (error) {
@@ -86,6 +98,9 @@ export default function Auth() {
     </TouchableWithoutFeedback>
   );
 }
+
+// Styles...
+
 
 
 
