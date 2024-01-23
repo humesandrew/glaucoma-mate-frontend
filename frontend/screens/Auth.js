@@ -27,6 +27,8 @@ export default function Auth() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        console.log(user);
+        console.log(AuthContext);
         // User is signed in.
         dispatch({ type: "LOGIN", payload: user });
         console.log("Firebase Token:", user.firebaseToken);
