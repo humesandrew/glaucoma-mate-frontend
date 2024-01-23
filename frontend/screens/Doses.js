@@ -8,7 +8,8 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Header from "../components/Header";
 
-export default function Doses() {
+export default function Doses({ route }) {
+  const { authToken } = route.params || {};
   const { user } = useAuthContext(); // Access user data from AuthContext
   const { logout } = useLogout();
   const [medications, setMedications] = useState([]); // Initialize medications state
@@ -22,6 +23,7 @@ export default function Doses() {
     const fetchMedications = async () => {
       console.log("User:", user);
       console.log("Firebase Auth Status:", auth.currentUser);
+      console.log("Authtoken:", authToken);
       // const firebaseData = auth.currentUser.uid;
       // console.log("uid:", firebaseData);
       try {
