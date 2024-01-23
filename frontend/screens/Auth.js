@@ -34,7 +34,7 @@ export default function Auth() {
        // Obtain the Firebase authentication token directly from the user
       const authToken = await user.getIdToken();
       console.log("Firebase Token:", authToken);
-        navigation.navigate("Doses");
+        navigation.navigate("Doses", { authToken });
       } else {
         // User is signed out.
         console.log("No user is signed in.");
