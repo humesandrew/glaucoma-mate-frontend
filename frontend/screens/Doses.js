@@ -46,10 +46,14 @@ export default function Doses({ route }) {
             console.log(data);
           } else {
             console.error("Error fetching medications:", response.statusText);
+          // Log the actual error message if available
+    const errorData = await response.json();
+    console.error('Backend Error:', errorData.error);
           }
         }
       } catch (error) {
         console.error("Error fetching medications:", error.message);
+ 
       }
     };
     fetchMedications();
