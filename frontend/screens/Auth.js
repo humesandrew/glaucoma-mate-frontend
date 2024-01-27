@@ -48,7 +48,7 @@ export default function Auth() {
   const handleSubmit = async () => {
     try {
       const userCredential = await login(email, password);
-      const user = userCredential.firebaseUser;
+      const user = userCredential.user;
 
       if (user) {
         dispatch({ type: "LOGIN", payload: user });

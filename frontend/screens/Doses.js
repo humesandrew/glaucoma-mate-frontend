@@ -27,13 +27,13 @@ export default function Doses({ route }) {
       // const firebaseData = auth.currentUser.uid;
       // console.log("uid:", firebaseData);
       try {
-        if (user && user.email) {
+        if (authToken) {
           // Make a request to your backend to get medications assigned to the user
           const response = await fetch(
             "https://glaucoma-mate-backend.onrender.com/api/medications/assigned",
             {
               headers: {
-                Authorization: `Bearer ${user.token}`,
+                Authorization: `Bearer ${authToken}`,
                 // Include the user's token for authentication
                 "Content-Type": "application/json",
               },
