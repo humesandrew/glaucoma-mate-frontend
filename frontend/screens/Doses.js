@@ -24,6 +24,10 @@ export default function Doses({ route }) {
     await logout(); // Call the logout function
     // Additional logic after logout if needed
   };
+  const handleDoseButtonPress = () => {
+    console.log("Dose button pressed");
+    // Add logic to handle dose button press here
+  };
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -81,12 +85,27 @@ export default function Doses({ route }) {
         <View style={styles.medicationsContainer}>
           {medications.map((medication, index) => (
             <View style={styles.doseBox} key={index}>
-              <Text>{medication.name}</Text>
+              <View style={styles.medicationInfo}>
+                <View style={styles.medInfoLeft}>
+                  <Text>{medication.name}</Text>
+                  <Text>Dosage: {medication.dosage}</Text>
+                </View>
+                <ScrollView horizontal>
+                  {[...Array(medication.dosage + 1)].map((_, i) => (
+                    <TouchableOpacity
+                      key={i}
+                      onPress={() => handleDoseButtonPress()}
+                      style={styles.doseButton}
+                    >
+                      <Text>Take Dose {i + 1}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
             </View>
           ))}
         </View>
       </ScrollView>
-      <StatusBar style="auto" />
     </View>
   );
 }
@@ -108,14 +127,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 50,
   },
-  subtitle: {
-    fontStyle: "italic",
-  },
-  doseTitle: {
-    fontWeight: "bold",
-    fontSize: 30,
-    marginTop: 20,
-  },
   logoutText: {
     fontSize: 18,
     color: "blue",
@@ -128,8 +139,13 @@ const styles = StyleSheet.create({
   medicationsContainer: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-    alignItems: "center",
     marginTop: 20,
+  },
+  medicationInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
   },
   doseBox: {
     borderWidth: 2,
@@ -139,7 +155,22 @@ const styles = StyleSheet.create({
     padding: 8,
     marginVertical: 10,
     width: "100%",
-    height: "50%",
-    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  medInfoLeft: {
+    alignItems: "flex-start",
+  },
+  doseButton: {
+    backgroundColor: "lightgray",
+    padding: 5,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  doseTitle: {
+    fontWeight: "bold",
+    fontSize: 30,
+    marginTop: 20,
   },
 });
