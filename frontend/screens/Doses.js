@@ -5,7 +5,13 @@ import { useAuthContext } from "../hooks/useAuthContext.js";
 import { useLogout } from "../hooks/useLogout.js";
 
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import Header from "../components/Header";
 
 export default function Doses({ route }) {
@@ -23,7 +29,7 @@ export default function Doses({ route }) {
     const fetchMedications = async () => {
       console.log("User:", user);
       console.log("Firebase Auth Status:", auth.currentUser);
-      console.log("Authtoken:", authToken);
+
       // const firebaseData = auth.currentUser.uid;
       // console.log("uid:", firebaseData);
       try {
@@ -46,14 +52,13 @@ export default function Doses({ route }) {
             console.log(data);
           } else {
             console.error("Error fetching medications:", response.statusText);
-          // Log the actual error message if available
-    const errorData = await response.json();
-    console.error('Backend Error:', errorData.error);
+            // Log the actual error message if available
+            const errorData = await response.json();
+            console.error("Backend Error:", errorData.error);
           }
         }
       } catch (error) {
         console.error("Error fetching medications:", error.message);
- 
       }
     };
     fetchMedications();
@@ -64,22 +69,23 @@ export default function Doses({ route }) {
       <Header />
       <View style={styles.topContent}>
         <Text style={styles.title}>Welcome back</Text>
-        {/* Display the user's email */}
-        <Text style={styles.subtitle}>{user ? user.email : ""}</Text>
-      </View>
-      <View style={styles.centerContent}>
-        <Text style={styles.doseTitle}>Doses Taken</Text>
+        {/* <Text style={styles.subtitle}>{user ? user.email : ""}</Text> */}
       </View>
       <TouchableOpacity onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
-      <View style={styles.bottomContent}>
-        {medications.map((medication, index) => (
-          <View style={styles.doseBox} key={index}>
-            <Text>{medication.name}</Text>
-          </View>
-        ))}
+      <View style={styles.centerContent}>
+        <Text style={styles.doseTitle}>Doses Taken</Text>
       </View>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.medicationsContainer}>
+          {medications.map((medication, index) => (
+            <View style={styles.doseBox} key={index}>
+              <Text>{medication.name}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
       <StatusBar style="auto" />
     </View>
   );
@@ -88,23 +94,15 @@ export default function Doses({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 0,
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
   },
   topContent: {
-    flex: 1,
-    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 25,
   },
   centerContent: {
-    flex: 1,
-    justifyContent: "center", // Center the text vertically
-    marginTop: 50,
-  },
-  bottomContent: {
-    flex: 1,
-    justifyContent: "flex-end",
-    paddingBottom: 300, // Add padding to create space
+    alignItems: "center",
   },
   title: {
     fontWeight: "bold",
@@ -116,6 +114,22 @@ const styles = StyleSheet.create({
   doseTitle: {
     fontWeight: "bold",
     fontSize: 30,
+    marginTop: 20,
+  },
+  logoutText: {
+    fontSize: 18,
+    color: "blue",
+    marginTop: 10,
+  },
+  scrollView: {
+    flex: 1,
+    width: "100%",
+  },
+  medicationsContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    alignItems: "center",
+    marginTop: 20,
   },
   doseBox: {
     borderWidth: 2,
@@ -123,7 +137,9 @@ const styles = StyleSheet.create({
     borderColor: "blue",
     backgroundColor: "lightblue",
     padding: 8,
-    margin: 10,
-    width: 300,
+    marginVertical: 10,
+    width: "100%",
+    height: "50%",
+    justifyContent: "center",
   },
 });
