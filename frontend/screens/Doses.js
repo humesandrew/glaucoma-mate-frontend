@@ -94,7 +94,7 @@ export default function Doses({ route }) {
                     <TouchableOpacity
                       key={i}
                       onPress={() => handleDoseButtonPress()}
-                      style={styles.doseButton}
+                      style={[styles.doseButton, i === medication.dosage ? styles.lastDoseButton : null]}
                     >
                       <Text>{i + 1}</Text>
                     </TouchableOpacity>
@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
   },
   medInfoLeft: {
     alignItems: "flex-start",
+    marginLeft: 10, // Add margin to the left
   },
   doseButtonsContainer: {
     flexDirection: "row",
@@ -167,6 +168,9 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: "50%",
     marginLeft: 10,
+  },
+  lastDoseButton: {
+    marginRight: 10,
   },
   doseTitle: {
     fontWeight: "bold",
