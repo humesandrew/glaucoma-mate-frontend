@@ -24,10 +24,32 @@ export default function Doses({ route }) {
     await logout(); // Call the logout function
     // Additional logic after logout if needed
   };
-  const handleDoseButtonPress = () => {
-    console.log("Dose button pressed");
-    // Add logic to handle dose button press here
+  const handleDoseButtonPress = async (medicationId, userId) => {
+    try {
+      const timestamp = new Date().toISOString(); // Get current timestamp
+      const response = await fetch('https://glaucoma-mate-backend.onrender.com/api/doses/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          medicationId,
+          userId,
+          timestamp,
+        }),
+      });
+      
+      if (response.ok) {
+        console.log('Dose logged successfully');
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to log dose:', errorData.error);
+      }
+    } catch (error) {
+      console.error('Error logging dose:', error.message);
+    }
   };
+  
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -91,13 +113,13 @@ export default function Doses({ route }) {
                 </View>
                 <View style={styles.doseButtonsContainer}>
                   {[...Array(medication.dosage + 1)].map((_, i) => (
-                    <TouchableOpacity
-                      key={i}
-                      onPress={() => handleDoseButtonPress()}
-                      style={[styles.doseButton, i === medication.dosage ? styles.lastDoseButton : null]}
-                    >
-                      <Text>{i + 1}</Text>
-                    </TouchableOpacity>
+                   <TouchableOpacity
+                   key={i}
+                   onPress={() => handleDoseButtonPress(medication._id, user._id)}
+                   style={[styles.doseButton, i === medication.dosage ? styles.lastDoseButton : null]}
+                 >
+                   <Text>{i + 1}</Text>
+                 </TouchableOpacity>
                   ))}
                 </View>
               </View>
