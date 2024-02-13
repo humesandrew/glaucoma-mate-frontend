@@ -73,7 +73,6 @@ export default function Doses({ route }) {
       <Header />
       <View style={styles.topContent}>
         <Text style={styles.title}>Welcome back</Text>
-        {/* <Text style={styles.subtitle}>{user ? user.email : ""}</Text> */}
       </View>
       <TouchableOpacity onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
@@ -90,17 +89,17 @@ export default function Doses({ route }) {
                   <Text>{medication.name}</Text>
                   <Text>Dosage: {medication.dosage}</Text>
                 </View>
-                <ScrollView horizontal>
+                <View style={styles.doseButtonsContainer}>
                   {[...Array(medication.dosage + 1)].map((_, i) => (
                     <TouchableOpacity
                       key={i}
                       onPress={() => handleDoseButtonPress()}
                       style={styles.doseButton}
                     >
-                      <Text>Take Dose {i + 1}</Text>
+                      <Text>{i + 1}</Text>
                     </TouchableOpacity>
                   ))}
-                </ScrollView>
+                </View>
               </View>
             </View>
           ))}
@@ -155,17 +154,18 @@ const styles = StyleSheet.create({
     padding: 8,
     marginVertical: 10,
     width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
   },
   medInfoLeft: {
     alignItems: "flex-start",
   },
+  doseButtonsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   doseButton: {
     backgroundColor: "lightgray",
     padding: 5,
-    borderRadius: 5,
+    borderRadius: "50%",
     marginLeft: 10,
   },
   doseTitle: {
