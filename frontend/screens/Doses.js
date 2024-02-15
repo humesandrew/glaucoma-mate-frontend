@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { auth } from "../firebase.js";
-
 import { useAuthContext } from "../hooks/useAuthContext.js";
 import { useLogout } from "../hooks/useLogout.js";
-
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -24,42 +22,44 @@ export default function Doses({ route }) {
     await logout(); // Call the logout function
     // Additional logic after logout if needed
   };
+
   const handleDoseButtonPress = async (medicationId, userId) => {
     try {
       const timestamp = new Date().toISOString(); // Get current timestamp
-      const response = await fetch('https://glaucoma-mate-backend.onrender.com/api/doses/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          medicationId,
-          userId,
-          timestamp,
-        }),
-      });
-      
+      const response = await fetch(
+        "https://glaucoma-mate-backend.onrender.com/api/doses/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            medicationId,
+            userId,
+            timestamp,
+          }),
+        }
+      );
+
       if (response.ok) {
-        console.log('Dose logged successfully');
+        console.log("Dose logged successfully");
       } else {
         const errorData = await response.json();
-        console.error('Failed to log dose:', errorData.error);
+        console.error("Failed to log dose:", errorData.error);
       }
     } catch (error) {
-      console.error('Error logging dose:', error.message);
+      console.error("Error logging dose:", error.message);
     }
   };
-  
 
   useEffect(() => {
     const fetchMedications = async () => {
       console.log("User:", user);
       console.log("Firebase Auth Status:", auth.currentUser);
 
-      // const firebaseData = auth.currentUser.uid;
-      // console.log("uid:", firebaseData);
       try {
-        if (authToken) {
+        if (authToken && auth.currentUser) {
           // Make a request to your backend to get medications assigned to the user
           const response = await fetch(
             "https://glaucoma-mate-backend.onrender.com/api/medications/assigned",
@@ -88,7 +88,7 @@ export default function Doses({ route }) {
       }
     };
     fetchMedications();
-  }, [user]); // Include user in the dependency array to fetch medications when user changes
+  }, [authToken, auth.currentUser]); // Include authToken and auth.currentUser in the dependency array to fetch medications when they change
 
   return (
     <View style={styles.container}>
@@ -113,13 +113,23 @@ export default function Doses({ route }) {
                 </View>
                 <View style={styles.doseButtonsContainer}>
                   {[...Array(medication.dosage + 1)].map((_, i) => (
-                   <TouchableOpacity
-                   key={i}
-                   onPress={() => handleDoseButtonPress(medication._id, user._id)}
-                   style={[styles.doseButton, i === medication.dosage ? styles.lastDoseButton : null]}
-                 >
-                   <Text>{i + 1}</Text>
-                 </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        console.log(medication._id);
+                        console.log(user ? user.uid : null); // Add console log here
+                        handleDoseButtonPress(
+                          medication._id,
+                          user ? user.uid : null
+                        );
+                      }}
+                      style={[
+                        styles.doseButton,
+                        i === medication.dosage ? styles.lastDoseButton : null,
+                      ]}
+                      key={i}
+                    >
+                      <Text>{i + 1}</Text>
+                    </TouchableOpacity>
                   ))}
                 </View>
               </View>
