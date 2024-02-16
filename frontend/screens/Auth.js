@@ -19,31 +19,32 @@ import { onAuthStateChanged } from 'firebase/auth';
 export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const { login, isLoading, error } = useLogin();
   const { dispatch } = useContext(AuthContext);
   const navigation = useNavigation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track if user is logged in
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        console.log(user);
-        console.log(AuthContext);
-        // User is signed in.
-        dispatch({ type: "LOGIN", payload: user });
-       // Obtain the Firebase authentication token directly from the user
-      const authToken = await user.getIdToken();
-      console.log("Firebase Token:", authToken);
+        console.log("User is signed in:", user);
+        
+        // Obtain the Firebase authentication token directly from the user
+        const authToken = await user.getIdToken();
+        console.log("Firebase Token:", authToken);
+  
+        // Navigate to the Doses screen with authToken as a parameter
         navigation.navigate("Doses", { authToken });
+        setIsLoggedIn(true); // Set isLoggedIn to true
       } else {
-        // User is signed out.
         console.log("No user is signed in.");
+        setIsLoggedIn(false); // Set isLoggedIn to false
       }
     });
   
     // Cleanup the listener when the component unmounts
     return () => unsubscribe();
-  }, []);
+  }, [navigation]); // Include navigation in the dependency array to prevent unnecessary re-renders
   
   const handleSubmit = async () => {
     try {
@@ -52,7 +53,7 @@ export default function Auth() {
 
       if (user) {
         dispatch({ type: "LOGIN", payload: user });
-        console.log("Firebase Token:", user.firebaseToken);
+        console.log("User token:", user.firebaseToken);
         navigation.navigate("Doses");
       }
     } catch (error) {
@@ -102,7 +103,6 @@ export default function Auth() {
     </TouchableWithoutFeedback>
   );
 }
-
 // Styles...
 
 

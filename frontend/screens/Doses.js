@@ -14,9 +14,9 @@ import Header from "../components/Header";
 
 export default function Doses({ route }) {
   const { authToken } = route.params || {};
-  const { user } = useAuthContext(); // Access user data from AuthContext
   const { logout } = useLogout();
   const [medications, setMedications] = useState([]); // Initialize medications state
+  const { user } = useAuthContext(); // Access user data from AuthContext
 
   const handleLogout = async () => {
     await logout(); // Call the logout function
@@ -24,8 +24,14 @@ export default function Doses({ route }) {
   };
 
   const handleDoseButtonPress = async (medicationId, userId) => {
+    console.log("handleDoseButtonPress function called");
+    console.log("Medication ID:", medicationId);
+    console.log("User ID:", userId);
+
     try {
       if (authToken && auth.currentUser) {
+        console.log("Making fetch request...");
+        
         const timestamp = new Date().toISOString(); // Get current timestamp
         const response = await fetch(
           "https://glaucoma-mate-backend.onrender.com/api/doses/",
@@ -42,25 +48,38 @@ export default function Doses({ route }) {
             }),
           }
         );
-  
+
+        console.log("Response status:", response.status);
+
         if (response.ok) {
+          const responseData = await response.json();
+          console.log("Response data:", responseData);
           console.log("Dose logged successfully");
         } else {
           const errorData = await response.json();
           console.error("Failed to log dose:", errorData.error);
         }
+      } else {
+        console.log("authToken or auth.currentUser is missing");
       }
     } catch (error) {
       console.error("Error logging dose:", error.message);
     }
   };
-  
 
   useEffect(() => {
+    console.log("authToken:", authToken);
+    console.log("auth.currentUser:", auth.currentUser);
+  
+    // Check if auth.currentUser is not null before logging its value
+    if (auth.currentUser !== null) {
+      console.log("Firebase Auth Status:", auth.currentUser);
+    }
+  
+    console.log("route", route.params);
+  
     const fetchMedications = async () => {
       console.log("User:", user);
-      console.log("Firebase Auth Status:", auth.currentUser);
-
       try {
         if (authToken && auth.currentUser) {
           // Make a request to your backend to get medications assigned to the user
@@ -74,7 +93,7 @@ export default function Doses({ route }) {
               },
             }
           );
-
+  
           if (response.ok) {
             const data = await response.json();
             setMedications(data);
@@ -90,9 +109,10 @@ export default function Doses({ route }) {
         console.error("Error fetching medications:", error.message);
       }
     };
+  
     fetchMedications();
-  }, [authToken, auth.currentUser]); // Include authToken and auth.currentUser in the dependency array to fetch medications when they change
-
+  }, [authToken, user]); // Remove auth.currentUser from dependency array
+  
   return (
     <View style={styles.container}>
       <Header />
@@ -116,17 +136,21 @@ export default function Doses({ route }) {
                 </View>
                 <View style={styles.doseButtonsContainer}>
                   {[...Array(medication.dosage + 1)].map((_, i) => (
-                  <TouchableOpacity
-                  onPress={() => handleDoseButtonPress(medication._id, user ? user.uid : null)
-                  }
-                  style={[
-                    styles.doseButton,
-                    i === medication.dosage ? styles.lastDoseButton : null,
-                  ]}
-                  key={i}
-                >
-                  <Text>{i + 1}</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        console.log("Button pressed");
+                        console.log("Medication ID:", medication._id);
+                        console.log("User ID:", user ? user.uid : null);
+                        handleDoseButtonPress(medication._id, user ? user.uid : null);
+                      }}
+                      style={[
+                        styles.doseButton,
+                        i === medication.dosage ? styles.lastDoseButton : null,
+                      ]}
+                      key={i}
+                    >
+                      <Text>{i + 1}</Text>
+                    </TouchableOpacity>
                   ))}
                 </View>
               </View>
