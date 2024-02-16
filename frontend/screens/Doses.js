@@ -25,33 +25,36 @@ export default function Doses({ route }) {
 
   const handleDoseButtonPress = async (medicationId, userId) => {
     try {
-      const timestamp = new Date().toISOString(); // Get current timestamp
-      const response = await fetch(
-        "https://glaucoma-mate-backend.onrender.com/api/doses/",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            medicationId,
-            userId,
-            timestamp,
-          }),
+      if (authToken && auth.currentUser) {
+        const timestamp = new Date().toISOString(); // Get current timestamp
+        const response = await fetch(
+          "https://glaucoma-mate-backend.onrender.com/api/doses/",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              medicationId,
+              userId,
+              timestamp,
+            }),
+          }
+        );
+  
+        if (response.ok) {
+          console.log("Dose logged successfully");
+        } else {
+          const errorData = await response.json();
+          console.error("Failed to log dose:", errorData.error);
         }
-      );
-
-      if (response.ok) {
-        console.log("Dose logged successfully");
-      } else {
-        const errorData = await response.json();
-        console.error("Failed to log dose:", errorData.error);
       }
     } catch (error) {
       console.error("Error logging dose:", error.message);
     }
   };
+  
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -113,23 +116,17 @@ export default function Doses({ route }) {
                 </View>
                 <View style={styles.doseButtonsContainer}>
                   {[...Array(medication.dosage + 1)].map((_, i) => (
-                    <TouchableOpacity
-                      onPress={() => {
-                        console.log(medication._id);
-                        console.log(user ? user.uid : null); // Add console log here
-                        handleDoseButtonPress(
-                          medication._id,
-                          user ? user.uid : null
-                        );
-                      }}
-                      style={[
-                        styles.doseButton,
-                        i === medication.dosage ? styles.lastDoseButton : null,
-                      ]}
-                      key={i}
-                    >
-                      <Text>{i + 1}</Text>
-                    </TouchableOpacity>
+                  <TouchableOpacity
+                  onPress={() => handleDoseButtonPress(medication._id, user ? user.uid : null)
+                  }
+                  style={[
+                    styles.doseButton,
+                    i === medication.dosage ? styles.lastDoseButton : null,
+                  ]}
+                  key={i}
+                >
+                  <Text>{i + 1}</Text>
+                </TouchableOpacity>
                   ))}
                 </View>
               </View>
