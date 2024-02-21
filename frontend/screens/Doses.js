@@ -76,7 +76,7 @@ export default function Doses({ route }) {
       console.log("Firebase Auth Status:", auth.currentUser);
     }
   
-    console.log("route", route.params);
+    console.log("Doses route", route.params);
   
     const fetchMedications = async () => {
       console.log("User:", user);
