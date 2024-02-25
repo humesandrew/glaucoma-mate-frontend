@@ -22,29 +22,31 @@ const HomeStack = () => {
         // Update AuthContext with the Firebase user if it's empty
         dispatch({ type: "LOGIN", payload: firebaseUser });
         setIsLoggedIn(true);
-        console.log('HomeStack login')
-      } else if (!firebaseUser) {
+      } else if (!firebaseUser && isLoggedIn) {
+        // Reset isLoggedIn when the user logs out
         setIsLoggedIn(false);
       }
     });
 
     // Clean up the listener on component unmount
     return () => unsubscribe();
-  }, [dispatch, user]);
+  }, [dispatch, user, isLoggedIn]);
 
-  useEffect(() => {
-    // Use this effect to navigate when the user logs in or out
-    if (isLoggedIn) {
-      // Navigate to 'Doses' when the user is logged in
-      navigation.navigate("Doses");
-    } else {
-      // Navigate to 'Signin' when the user logs out
-      navigation.navigate("Signin");
-    }
-  }, [isLoggedIn, navigation]);
+  // This effect is no longer needed
+  // useEffect(() => {
+  //   // Use this effect to navigate when the user logs in or out
+  //   if (isLoggedIn) {
+  //     // Navigate to 'Doses' when the user is logged in
+  //     navigation.navigate("Doses");
+  //   } else {
+  //     // Navigate to 'Signin' when the user logs out
+  //     navigation.navigate("Signin");
+  //   }
+  // }, [isLoggedIn, navigation]);
 
   return (
-    <Stack.Navigator initialRouteName={isLoggedIn ? "Doses" : "Signin"}>
+    <Stack.Navigator>
+      {/* Always render both screens */}
       <Stack.Screen name="Signin" component={Auth} />
       <Stack.Screen name="Doses" component={Doses} />
     </Stack.Navigator>

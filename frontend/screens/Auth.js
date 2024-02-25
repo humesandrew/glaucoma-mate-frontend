@@ -54,7 +54,7 @@ export default function Auth() {
       if (user) {
         dispatch({ type: "LOGIN", payload: user });
         console.log("User token:", user.firebaseToken);
-        navigation.navigate("Doses");
+        setIsLoggedIn(true); // Update isLoggedIn state
       }
     } catch (error) {
       console.error("Login failed with error:", error);
