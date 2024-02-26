@@ -36,7 +36,7 @@ const HomeStack = () => {
 
   return (
     <Stack.Navigator>
-      {/* Always render both screens */}
+     
       <Stack.Screen name="Signin" component={Auth} />
       <Stack.Screen name="Doses" component={Doses} />
     </Stack.Navigator>
