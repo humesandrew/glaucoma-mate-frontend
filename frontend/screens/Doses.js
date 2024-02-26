@@ -31,26 +31,30 @@ export default function Doses({ route }) {
     try {
       if (authToken && auth.currentUser) {
         console.log("Making fetch request...");
-        
+  
         const timestamp = new Date().toISOString(); // Get current timestamp
+        const requestBody = {
+          medicationId,
+          userId,
+          timestamp,
+        };
+  
+        const requestOptions = {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        };
+  console.log(requestBody);
         const response = await fetch(
           "https://glaucoma-mate-backend.onrender.com/api/doses/",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              medicationId,
-              userId,
-              timestamp,
-            }),
-          }
+          requestOptions
         );
-
+  
         console.log("Response status:", response.status);
-
+  
         if (response.ok) {
           const responseData = await response.json();
           console.log("Response data:", responseData);
@@ -138,9 +142,6 @@ export default function Doses({ route }) {
                   {[...Array(medication.dosage + 1)].map((_, i) => (
                     <TouchableOpacity
                       onPress={() => {
-                        console.log("Button pressed");
-                        console.log("Medication ID:", medication._id);
-                        console.log("User ID:", user ? user.uid : null);
                         handleDoseButtonPress(medication._id, user ? user.uid : null);
                       }}
                       style={[
