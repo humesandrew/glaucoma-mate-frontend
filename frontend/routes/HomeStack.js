@@ -25,24 +25,14 @@ const HomeStack = () => {
       } else if (!firebaseUser && isLoggedIn) {
         // Reset isLoggedIn when the user logs out
         setIsLoggedIn(false);
+        // Navigate to the 'Signin' screen when the user logs out
+        navigation.navigate("Signin");
       }
     });
 
     // Clean up the listener on component unmount
     return () => unsubscribe();
-  }, [dispatch, user, isLoggedIn]);
-
-  // This effect is no longer needed
-  // useEffect(() => {
-  //   // Use this effect to navigate when the user logs in or out
-  //   if (isLoggedIn) {
-  //     // Navigate to 'Doses' when the user is logged in
-  //     navigation.navigate("Doses");
-  //   } else {
-  //     // Navigate to 'Signin' when the user logs out
-  //     navigation.navigate("Signin");
-  //   }
-  // }, [isLoggedIn, navigation]);
+  }, [dispatch, user, isLoggedIn, navigation]);
 
   return (
     <Stack.Navigator>
