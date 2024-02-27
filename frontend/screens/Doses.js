@@ -22,7 +22,16 @@ export default function Doses({ route }) {
     await logout(); // Call the logout function
     // Additional logic after logout if needed
   };
-
+  // Function to check if a dose has been taken today
+  const isDoseTakenToday = (doseTimestamp) => {
+    const today = new Date();
+    const doseDate = new Date(doseTimestamp);
+    return (
+      today.getFullYear() === doseDate.getFullYear() &&
+      today.getMonth() === doseDate.getMonth() &&
+      today.getDate() === doseDate.getDate()
+    );
+  };
   const handleDoseButtonPress = async (medicationId, userId) => {
     console.log("handleDoseButtonPress function called");
     console.log("Medication ID:", medicationId);
@@ -137,31 +146,31 @@ export default function Doses({ route }) {
       <ScrollView style={styles.scrollView}>
         <View style={styles.medicationsContainer}>
           {medications.map((medication, index) => (
-            <View style={styles.doseBox} key={index}>
-              <View style={styles.medicationInfo}>
-                <View style={styles.medInfoLeft}>
-                  <Text>{medication.name}</Text>
-                  <Text>Dosage: {medication.dosage}</Text>
-                </View>
-                <View style={styles.doseButtonsContainer}>
-                  {[...Array(medication.dosage + 1)].map((_, i) => (
-                    <TouchableOpacity
-                    onPress={() => {
-                      handleDoseButtonPress(medication._id, user ? user.uid : null);
-                    }}
-                    
-                      style={[
-                        styles.doseButton,
-                        i === medication.dosage ? styles.lastDoseButton : null,
-                      ]}
-                      key={i}
-                    >
-                      <Text>{i + 1}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            </View>
+             <View style={styles.doseBox} key={index}>
+             <View style={styles.medicationInfo}>
+               <View style={styles.medInfoLeft}>
+                 <Text>{medication.name}</Text>
+                 <Text>Dosage: {medication.dosage}</Text>
+               </View>
+               <View style={styles.doseButtonsContainer}>
+                 {[...Array(medication.dosage + 1)].map((_, i) => (
+                   <TouchableOpacity
+                     onPress={() => {
+                       handleDoseButtonPress(medication._id, user ? user.uid : null);
+                     }}
+                     style={[
+                       styles.doseButton,
+                       i === medication.dosage ? styles.lastDoseButton : null,
+                       medication.isTaken ? styles.doseButtonTaken : null,
+                     ]}
+                     key={i}
+                   >
+                     <Text>{i + 1}</Text>
+                   </TouchableOpacity>
+                 ))}
+               </View>
+             </View>
+           </View>
           ))}
         </View>
       </ScrollView>
@@ -236,5 +245,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 30,
     marginTop: 20,
+  },
+  doseButtonTaken: {
+    backgroundColor: "darkblue",
   },
 });
