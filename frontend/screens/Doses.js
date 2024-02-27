@@ -17,7 +17,7 @@ export default function Doses({ route }) {
   const { logout } = useLogout();
   const [medications, setMedications] = useState([]); // Initialize medications state
   const { user } = useAuthContext(); // Access user data from AuthContext
-
+  const userId = auth.currentUser.uid; // Retrieve Firebase UID
   const handleLogout = async () => {
     await logout(); // Call the logout function
     // Additional logic after logout if needed
@@ -27,18 +27,22 @@ export default function Doses({ route }) {
     console.log("handleDoseButtonPress function called");
     console.log("Medication ID:", medicationId);
     console.log("User ID:", userId);
-
+    
     try {
       if (authToken && auth.currentUser) {
         console.log("Making fetch request...");
   
         const timestamp = new Date().toISOString(); // Get current timestamp
+       
+        // Construct the request body
         const requestBody = {
           medicationId,
-          userId,
+          user: userId || "", // Use the user ID passed as an argument or default to an empty string
           timestamp,
         };
   
+        console.log("Request Body:", requestBody); // Log the request body before making the fetch request
+      
         const requestOptions = {
           method: "POST",
           headers: {
@@ -47,7 +51,7 @@ export default function Doses({ route }) {
           },
           body: JSON.stringify(requestBody),
         };
-  console.log(requestBody);
+  
         const response = await fetch(
           "https://glaucoma-mate-backend.onrender.com/api/doses/",
           requestOptions
@@ -70,6 +74,7 @@ export default function Doses({ route }) {
       console.error("Error logging dose:", error.message);
     }
   };
+  
 
   useEffect(() => {
     console.log("authToken:", authToken);
@@ -141,9 +146,10 @@ export default function Doses({ route }) {
                 <View style={styles.doseButtonsContainer}>
                   {[...Array(medication.dosage + 1)].map((_, i) => (
                     <TouchableOpacity
-                      onPress={() => {
-                        handleDoseButtonPress(medication._id, user ? user.uid : null);
-                      }}
+                    onPress={() => {
+                      handleDoseButtonPress(medication._id, user ? user.uid : null);
+                    }}
+                    
                       style={[
                         styles.doseButton,
                         i === medication.dosage ? styles.lastDoseButton : null,
