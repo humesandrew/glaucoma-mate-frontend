@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import Header from "../components/Header";
+import Footer from "../components/Footer.js";
 
 export default function Doses({ route }) {
   const { authToken } = route.params || {};
@@ -174,7 +174,7 @@ export default function Doses({ route }) {
           ))}
         </View>
       </ScrollView>
-      <Header />
+      <Footer />
     </View>
   );
 }
