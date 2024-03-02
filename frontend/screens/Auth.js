@@ -10,7 +10,7 @@ import {
   Keyboard,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Header from "../components/Header";
+import Footer from "../components/Footer.js";
 import { useLogin } from "../hooks/useLogin";
 import { AuthContext } from "../context/AuthContext";
 import { auth } from '../firebase.js';
@@ -97,7 +97,7 @@ export default function Auth() {
             {error && <Text style={styles.errorText}>{error}</Text>}
           </View>
         </View>
-        <Header />
+        <Footer />
         <StatusBar style="auto" />
       </View>
     </TouchableWithoutFeedback>

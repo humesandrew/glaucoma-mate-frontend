@@ -7,7 +7,7 @@ import {
     View,
     TouchableWithoutFeedback,
   } from "react-native";
-  import Header from "../components/Header";
+  import Footer from "../components/Footer.js";
 
 
 
@@ -28,7 +28,7 @@ import {
             <View style={styles.medContainer}>
             </View>
           </View>
-          <Header />
+          <Footer />
      
         </View>
       </TouchableWithoutFeedback>
