@@ -5,6 +5,8 @@ import { auth } from "../firebase";
 import { useNavigation } from "@react-navigation/native";
 import Auth from "../screens/Auth.js";
 import Doses from "../screens/Doses.js";
+import Manage from "../screens/Manage.js";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +41,7 @@ const HomeStack = () => {
      
       <Stack.Screen name="Signin" component={Auth} />
       <Stack.Screen name="Doses" component={Doses} />
+      <Stack.Screen name="Manage" component={Manage} />
     </Stack.Navigator>
   );
 };
