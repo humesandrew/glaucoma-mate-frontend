@@ -133,7 +133,7 @@ export default function Doses({ route }) {
   
   return (
     <View style={styles.container}>
-      <Header />
+      
       <View style={styles.topContent}>
         <Text style={styles.title}>Welcome back</Text>
       </View>
@@ -174,6 +174,7 @@ export default function Doses({ route }) {
           ))}
         </View>
       </ScrollView>
+      <Header />
     </View>
   );
 }

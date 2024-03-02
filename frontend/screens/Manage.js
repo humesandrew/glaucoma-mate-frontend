@@ -5,8 +5,7 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableOpacity,
-    ScrollView,
+    TouchableWithoutFeedback,
   } from "react-native";
   import Header from "../components/Header";
 
@@ -30,7 +29,7 @@ import {
             </View>
           </View>
           <Header />
-          <StatusBar style="auto" />
+     
         </View>
       </TouchableWithoutFeedback>
     );

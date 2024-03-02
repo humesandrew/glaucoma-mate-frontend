@@ -22,12 +22,13 @@ export default function Footer() {
                 <Text style={styles.title}>Glaucoma-mate</Text>
             </View>
             <View style={styles.linksContainer}>
-                <TouchableOpacity onPress={handleManagePress}>
-                    <Text style={styles.link}>Manage</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleLogout}>
-                    <Text style={styles.link}>Logout</Text>
-                </TouchableOpacity>
+            <TouchableOpacity onPress={handleManagePress}>
+    <Text style={styles.link}>Manage</Text>
+</TouchableOpacity>
+<TouchableOpacity onPress={handleLogout}>
+    <Text style={styles.link}>Logout</Text>
+</TouchableOpacity>
+
             </View>
         </View>
     );
@@ -62,6 +63,7 @@ const styles = StyleSheet.create({
     link: {
         color: '#fff',
         fontSize: 16,
-        marginLeft: 20, // Add some space between the links
+        marginLeft: 20,
+       // Add some space between the links
     },
 });
