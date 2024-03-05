@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { auth } from "../firebase.js";
 import { useAuthContext } from "../hooks/useAuthContext.js";
 
+
 import {
     StyleSheet,
     Text,
     View,
     TouchableWithoutFeedback,
+    FlatList
   } from "react-native";
   import Footer from "../components/Footer.js";
 
@@ -17,30 +19,55 @@ import {
 console.log(authToken);
 const { user } = useAuthContext();
 console.log(user);
+const [medications, setMedications] = useState([]);
 
+    useEffect(() => {
+        const fetchMedications = async () => {
+            try {
+                const response = await fetch("https://glaucoma-mate-backend.onrender.com/api/medications/", {
+                    headers: {
+                        Authorization: `Bearer ${user.authToken}`, // Use the user's authToken for authentication
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to fetch medications");
+                }
+                const data = await response.json();
+                setMedications(data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
-  
+        fetchMedications();
+    }, []); // Fetch medications when authToken changes
+
     return (
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Keyboard.dismiss();
-        }}
-      >
-        <View style={styles.container}>
-          <View style={styles.main}>
-            <Text style={styles.title}>Welcome</Text>
-            <Text style={styles.subtitle}>This is glaucoma-mate</Text>
-            <View style={styles.medContainer}>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View style={styles.container}>
+                <View style={styles.main}>
+                    <Text style={styles.title}>Manage Medications</Text>
+                    <Text style={styles.subtitle}>Click to add or remove</Text>
+                    <FlatList
+                        data={medications}
+                        keyExtractor={(medication) => medication._id}
+                        renderItem={({ item }) => (
+                            <View>
+                                <Text>{item.name}</Text>
+                                <Text>Dosage: {item.dosage}</Text>
+                            </View>
+                        )}
+                    />
+                </View>
+                <Footer />
             </View>
-          </View>
-          <Footer />
-     
-        </View>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
     );
-  }
+}
 
   
+ 
 
   
   
