@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "../firebase.js";
 import { useAuthContext } from "../hooks/useAuthContext.js";
+
 import {
     StyleSheet,
     Text,
@@ -11,8 +12,12 @@ import {
 
 
 
-  export default function Auth() {
-   
+  export default function Manage({ route }) {
+    const { authToken } = route.params || {};
+console.log(authToken);
+const { user } = useAuthContext();
+console.log(user);
+
 
   
     return (

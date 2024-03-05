@@ -174,7 +174,7 @@ export default function Doses({ route }) {
           ))}
         </View>
       </ScrollView>
-      <Footer />
+      <Footer authToken={authToken}/>
     </View>
   );
 }

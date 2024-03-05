@@ -3,12 +3,12 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useLogout } from "../hooks/useLogout.js";
 
-export default function Footer() {
+export default function Footer({ authToken }) {
     const navigation = useNavigation();
     const { logout } = useLogout();
  
     const handleManagePress = () => {
-        navigation.navigate('Manage'); // Navigate to the Manage screen
+        navigation.navigate('Manage', { authToken: authToken }); // Navigate to the Manage screen
     };
 
     const handleLogout = async () => {
@@ -33,6 +33,7 @@ export default function Footer() {
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     footer: {
