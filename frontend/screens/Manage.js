@@ -16,6 +16,7 @@ export default function Manage({ route }) {
   const { authToken } = route.params || {};
   console.log(authToken);
   const { user } = useAuthContext();
+  const userId = auth.currentUser.uid; 
   console.log(user);
   const [medications, setMedications] = useState([]);
 
@@ -42,11 +43,34 @@ export default function Manage({ route }) {
     fetchMedications();
   }, []); // Fetch medications when component mounts
 
-  const handleMedicationPress = (medicationId) => {
-    // Handle logic when a medication button is pressed
-    console.log("Medication ID:", medicationId);
-    // Perform any action you want, such as assigning the medication to a user
+  const handleMedicationPress = async (medicationId) => {
+    try {
+      const response = await fetch("https://glaucoma-mate-backend.onrender.com/api/medications/assign", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`, // Use the user's authToken for authentication
+        },
+        body: JSON.stringify({
+          userId: userId, // Include the userId in the request body
+          medicationId: medicationId,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to assign medication to user");
+      }
+      
+      const data = await response.json();
+      console.log(data.message); // Log success message
+    } catch (error) {
+      console.error("Error assigning medication to user:", error.message);
+      console.log(userId)
+      // Handle error
+    }
   };
+  
+  
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
