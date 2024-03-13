@@ -36,22 +36,22 @@ export default function Doses({ route }) {
     console.log("handleDoseButtonPress function called");
     console.log("Medication ID:", medicationId);
     console.log("User ID:", userId);
-    
+
     try {
       if (authToken && auth.currentUser) {
         console.log("Making fetch request...");
-  
+
         const timestamp = new Date().toISOString(); // Get current timestamp
-       
+
         // Construct the request body
         const requestBody = {
           medicationId,
           user: userId || "", // Use the user ID passed as an argument or default to an empty string
           timestamp,
         };
-  
+
         console.log("Request Body:", requestBody); // Log the request body before making the fetch request
-      
+
         const requestOptions = {
           method: "POST",
           headers: {
@@ -60,14 +60,14 @@ export default function Doses({ route }) {
           },
           body: JSON.stringify(requestBody),
         };
-  
+
         const response = await fetch(
           "https://glaucoma-mate-backend.onrender.com/api/doses/",
           requestOptions
         );
-  
+
         console.log("Response status:", response.status);
-  
+
         if (response.ok) {
           const responseData = await response.json();
           console.log("Response data:", responseData);
@@ -83,19 +83,18 @@ export default function Doses({ route }) {
       console.error("Error logging dose:", error.message);
     }
   };
-  
 
   useEffect(() => {
     console.log("authToken:", authToken);
     console.log("auth.currentUser:", auth.currentUser);
-  
+
     // Check if auth.currentUser is not null before logging its value
     if (auth.currentUser !== null) {
       console.log("Firebase Auth Status:", auth.currentUser);
     }
-  
+
     console.log("Doses route", route.params);
-  
+
     const fetchMedications = async () => {
       console.log("User:", user);
       try {
@@ -111,7 +110,7 @@ export default function Doses({ route }) {
               },
             }
           );
-  
+
           if (response.ok) {
             const data = await response.json();
             setMedications(data);
@@ -127,13 +126,12 @@ export default function Doses({ route }) {
         console.error("Error fetching medications:", error.message);
       }
     };
-  
+
     fetchMedications();
   }, [authToken, user]); // Remove auth.currentUser from dependency array
-  
+
   return (
     <View style={styles.container}>
-      
       <View style={styles.topContent}>
         <Text style={styles.title}>Welcome back</Text>
       </View>
@@ -146,35 +144,38 @@ export default function Doses({ route }) {
       <ScrollView style={styles.scrollView}>
         <View style={styles.medicationsContainer}>
           {medications.map((medication, index) => (
-             <View style={styles.doseBox} key={index}>
-             <View style={styles.medicationInfo}>
-               <View style={styles.medInfoLeft}>
-                 <Text>{medication.name}</Text>
-                 <Text>Dosage: {medication.dosage}</Text>
-               </View>
-               <View style={styles.doseButtonsContainer}>
-                 {[...Array(medication.dosage + 1)].map((_, i) => (
-                   <TouchableOpacity
-                     onPress={() => {
-                       handleDoseButtonPress(medication._id, user ? user.uid : null);
-                     }}
-                     style={[
-                       styles.doseButton,
-                       i === medication.dosage ? styles.lastDoseButton : null,
-                       medication.isTaken ? styles.doseButtonTaken : null,
-                     ]}
-                     key={i}
-                   >
-                     <Text>{i + 1}</Text>
-                   </TouchableOpacity>
-                 ))}
-               </View>
-             </View>
-           </View>
+            <View style={styles.doseBox} key={index}>
+              <View style={styles.medicationInfo}>
+                <View style={styles.medInfoLeft}>
+                  <Text>{medication.name}</Text>
+                  <Text>Dosage: {medication.dosage}</Text>
+                </View>
+                <View style={styles.doseButtonsContainer}>
+                  {[...Array(medication.dosage + 1)].map((_, i) => (
+                    <TouchableOpacity
+                      onPress={() => {
+                        handleDoseButtonPress(
+                          medication._id,
+                          user ? user.uid : null
+                        );
+                      }}
+                      style={[
+                        styles.doseButton,
+                        i === medication.dosage ? styles.lastDoseButton : null,
+                        medication.isTaken ? styles.doseButtonTaken : null,
+                      ]}
+                      key={i}
+                    >
+                      <Text>{i + 1}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </View>
           ))}
         </View>
       </ScrollView>
-      <Footer authToken={authToken}/>
+      <Footer authToken={authToken} />
     </View>
   );
 }

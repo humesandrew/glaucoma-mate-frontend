@@ -8,7 +8,7 @@ import {
   View,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  FlatList
+  FlatList,
 } from "react-native";
 import Footer from "../components/Footer.js";
 
@@ -16,25 +16,29 @@ export default function Manage({ route }) {
   const { authToken } = route.params || {};
   console.log(authToken);
   const { user } = useAuthContext();
-  const userId = auth.currentUser.uid; 
   console.log(user);
+  const userId = auth.currentUser.uid;
+  console.log(userId);
   const [medications, setMedications] = useState([]);
 
   useEffect(() => {
     const fetchMedications = async () => {
       try {
-        const response = await fetch("https://glaucoma-mate-backend.onrender.com/api/medications/", {
-          headers: {
-            Authorization: `Bearer ${user.authToken}`, // Use the user's authToken for authentication
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          "https://glaucoma-mate-backend.onrender.com/api/medications/",
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`, // Use the user's authToken for authentication
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch medications");
         }
         const data = await response.json();
         setMedications(data);
-        console.log(data)
+        console.log(data);
       } catch (error) {
         console.error(error);
       }
@@ -43,34 +47,43 @@ export default function Manage({ route }) {
     fetchMedications();
   }, []); // Fetch medications when component mounts
 
-  const handleMedicationPress = async (medicationId) => {
+  const handleMedicationPress = async (medicationId, userId) => {
+    console.log("handleMedicationPress function called");
+    console.log("Medication ID:", medicationId);
+    console.log("User ID:", userId);
+    console.log(authToken);
     try {
-      const response = await fetch("https://glaucoma-mate-backend.onrender.com/api/medications/assign", {
+      const requestBody = {
+        medicationId,
+        user: userId,
+      };
+      console.log("Request body", requestBody);
+      const requestOptions = {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`, // Use the user's authToken for authentication
         },
-        body: JSON.stringify({
-          userId: userId, // Include the userId in the request body
-          medicationId: medicationId,
-        }),
-      });
-      
+        body: JSON.stringify(requestBody),
+      };
+
+      const response = await fetch(
+        "https://glaucoma-mate-backend.onrender.com/api/medications/assign",
+        requestOptions
+      );
+      console.log("response status:", response.status);
       if (!response.ok) {
         throw new Error("Failed to assign medication to user");
       }
-      
+
       const data = await response.json();
       console.log(data.message); // Log success message
     } catch (error) {
       console.error("Error assigning medication to user:", error.message);
-      console.log(userId)
+      console.log(typeof userId, userId);
       // Handle error
     }
   };
-  
-  
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -86,10 +99,16 @@ export default function Manage({ route }) {
             numColumns={2} // Render items in 2 columns
             renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={() => handleMedicationPress(item._id)}
+                onPress={() =>
+                  handleMedicationPress(
+                    item._id, 
+                    user ? user.uid : null)
+                }
                 style={styles.medicationButton}
               >
-                <Text numberOfLines={2} style={styles.medicationText}>{item.name}</Text>
+                <Text numberOfLines={2} style={styles.medicationText}>
+                  {item.name}
+                </Text>
                 {/* <Text>Dosage: {item.dosage}</Text> */}
               </TouchableOpacity>
             )}
