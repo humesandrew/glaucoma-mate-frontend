@@ -14,21 +14,17 @@ import Footer from "../components/Footer.js";
 
 export default function Manage({ route }) {
   const { authToken } = route.params || {};
-  console.log(authToken);
   const { user } = useAuthContext();
-  console.log(user);
-  const userId = auth.currentUser.uid;
-  console.log(userId);
-  const [medications, setMedications] = useState([]);
+  const [allMedications, setAllMedications] = useState([]); // New state to store all medications
 
   useEffect(() => {
-    const fetchMedications = async () => {
+    const fetchAllMedications = async () => {
       try {
         const response = await fetch(
           "https://glaucoma-mate-backend.onrender.com/api/medications/",
           {
             headers: {
-              Authorization: `Bearer ${authToken}`, // Use the user's authToken for authentication
+              Authorization: `Bearer ${authToken}`,
               "Content-Type": "application/json",
             },
           }
@@ -37,15 +33,15 @@ export default function Manage({ route }) {
           throw new Error("Failed to fetch medications");
         }
         const data = await response.json();
-        setMedications(data);
+        setAllMedications(data); // Set all medications in the state
         console.log(data);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchMedications();
-  }, []); // Fetch medications when component mounts
+    fetchAllMedications();
+  }, [authToken]); // Fetch medications when authToken changes
 
   const handleMedicationPress = async (medicationId, userId) => {
     console.log("handleMedicationPress function called");
@@ -94,22 +90,22 @@ export default function Manage({ route }) {
         </View>
         <View style={styles.main}>
           <FlatList
-            data={medications}
+            data={allMedications} // Use allMedications state instead of medications
             keyExtractor={(medication) => medication._id}
-            numColumns={2} // Render items in 2 columns
+            numColumns={2}
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() =>
                   handleMedicationPress(
                     item._id, 
-                    user ? user.uid : null)
+                    user ? user.uid : null
+                  )
                 }
                 style={styles.medicationButton}
               >
                 <Text numberOfLines={2} style={styles.medicationText}>
                   {item.name}
                 </Text>
-                {/* <Text>Dosage: {item.dosage}</Text> */}
               </TouchableOpacity>
             )}
           />
