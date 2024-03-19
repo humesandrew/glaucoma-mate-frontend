@@ -43,17 +43,20 @@ export default function Manage({ route }) {
     fetchAllMedications();
   }, [authToken]); // Fetch medications when authToken changes
 
-  const handleMedicationPress = async (medicationId, userId) => {
+  const handleMedicationPress = async (medicationId) => {
     console.log("handleMedicationPress function called");
     console.log("Medication ID:", medicationId);
-    console.log("User ID:", userId);
+    console.log("User ID:", user ? user.uid : null); // Using user from useAuthContext
+    console.log(typeof(user.uid));
     console.log(authToken);
     try {
       const requestBody = {
         medicationId,
-        user: userId,
+        userId: user.uid || "", // Convert to string if user is not null
       };
+  
       console.log("Request body", requestBody);
+  
       const requestOptions = {
         method: "POST",
         headers: {
@@ -62,24 +65,28 @@ export default function Manage({ route }) {
         },
         body: JSON.stringify(requestBody),
       };
-
+  
       const response = await fetch(
         "https://glaucoma-mate-backend.onrender.com/api/medications/assign",
         requestOptions
       );
       console.log("response status:", response.status);
+  
+      // Check the response status and handle accordingly
       if (!response.ok) {
-        throw new Error("Failed to assign medication to user");
+        const errorMessage = await response.text(); // Get the error message from the response body
+        console.error("Failed to assign medication to user:", errorMessage);
+        throw new Error(errorMessage); // Throw the error to be caught in the catch block
       }
-
       const data = await response.json();
       console.log(data.message); // Log success message
     } catch (error) {
       console.error("Error assigning medication to user:", error.message);
-      console.log(typeof userId, userId);
       // Handle error
     }
   };
+  
+  
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
