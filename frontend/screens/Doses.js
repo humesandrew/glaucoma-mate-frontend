@@ -17,7 +17,7 @@ export default function Doses({ route }) {
   const { logout } = useLogout();
   const [medications, setMedications] = useState([]); // Initialize medications state
   const { user } = useAuthContext(); // Access user data from AuthContext
-  const userId = auth.currentUser.uid; // Retrieve Firebase UID
+  // const userId = auth.currentUser.uid; // Retrieve Firebase UID
   const handleLogout = async () => {
     await logout(); // Call the logout function
     // Additional logic after logout if needed
@@ -85,50 +85,58 @@ export default function Doses({ route }) {
   };
 
   useEffect(() => {
-    console.log("authToken:", authToken);
-    console.log("auth.currentUser:", auth.currentUser);
-
-    // Check if auth.currentUser is not null before logging its value
-    if (auth.currentUser !== null) {
-      console.log("Firebase Auth Status:", auth.currentUser);
-    }
-
-    console.log("Doses route", route.params);
-
-    const fetchMedications = async () => {
-      console.log("User:", user);
-      try {
-        if (authToken && auth.currentUser) {
-          // Make a request to your backend to get medications assigned to the user
-          const response = await fetch(
-            "https://glaucoma-mate-backend.onrender.com/api/medications/assigned",
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-                // Include the user's token for authentication
-                "Content-Type": "application/json",
-              },
+    // This function sets up an auth state listener and fetches medications
+    const setupAuthListenerAndFetchMedications = () => {
+      console.log("Setting up auth state listener and fetching medications");
+  
+      // Set up auth state listener
+      const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+        if (firebaseUser) {
+          console.log("User is logged in:", firebaseUser);
+          // User is logged in, proceed to fetch medications
+          try {
+            if (authToken) {
+              const response = await fetch(
+                "https://glaucoma-mate-backend.onrender.com/api/medications/assigned",
+                {
+                  headers: {
+                    Authorization: `Bearer ${authToken}`,
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+  
+              if (response.ok) {
+                const data = await response.json();
+                setMedications(data);
+                console.log("Medications fetched successfully:", data);
+              } else {
+                console.error("Error fetching medications:", response.statusText);
+                // Attempt to log detailed error message if possible
+                const errorData = await response.json();
+                console.error("Backend Error:", errorData.error);
+              }
             }
-          );
-
-          if (response.ok) {
-            const data = await response.json();
-            setMedications(data);
-            console.log(data);
-          } else {
-            console.error("Error fetching medications:", response.statusText);
-            // Log the actual error message if available
-            const errorData = await response.json();
-            console.error("Backend Error:", errorData.error);
+          } catch (error) {
+            console.error("Error fetching medications:", error.message);
           }
+        } else {
+          // User is not logged in, clear medications
+          console.log("User is logged out");
+          setMedications([]);
         }
-      } catch (error) {
-        console.error("Error fetching medications:", error.message);
-      }
+      });
+  
+      return unsubscribe; // Return the unsubscribe function for cleanup
     };
-
-    fetchMedications();
-  }, [authToken, user]); // Remove auth.currentUser from dependency array
+  
+    const unsubscribe = setupAuthListenerAndFetchMedications();
+  
+    return () => {
+      unsubscribe(); // Cleanup on component unmount or before re-running this effect
+    };
+  }, [authToken]); // Dependency on authToken, assuming it changes on login/logout
+  
 
   return (
     <View style={styles.container}>
