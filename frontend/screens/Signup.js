@@ -16,7 +16,7 @@ import { AuthContext } from "../context/AuthContext";
 import { auth } from "../firebase.js";
 import { onAuthStateChanged } from "firebase/auth";
 
-export default function Auth() {
+export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, isLoading, error } = useLogin();
@@ -69,8 +69,10 @@ export default function Auth() {
     >
       <View style={styles.container}>
         <View style={styles.main}>
-          <Text style={styles.title}>Welcome</Text>
-          <Text style={styles.subtitle}>This is IOP Buddy</Text>
+          <Text style={styles.title}>Signup</Text>
+          <Text style={styles.subtitle}>
+            An app to manage your glaucoma medications
+          </Text>
           <View style={styles.formContainer}>
             <Text>Email</Text>
             <TextInput
@@ -89,17 +91,9 @@ export default function Auth() {
               disabled={isLoading} // Disable the button while loading
             >
               <Text style={styles.buttonText}>
-                {isLoading ? "Logging In..." : "Login"}
+                {isLoading ? "Signing up..." : "Signup"}
               </Text>
             </TouchableOpacity>
-            <View style={styles.signupPromptContainer}>
-              <Text>Not a user yet?</Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-                <Text style={styles.signupText}>Signup</Text>
-              </TouchableOpacity>
-            </View>
-            {/* <Text>Email entered: {email}</Text>
-            <Text>Password entered: {password}</Text> */}
             {error && <Text style={styles.errorText}>{error}</Text>}
           </View>
         </View>
@@ -154,13 +148,5 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginTop: 10,
-  },
-  signupPromptContainer: {
-    marginTop: 10, // Adjust this value as needed to create space
-    alignItems: "center", // This centers the text and button if that's what you want
-  },
-  signupText: {
-    color: "blue", // Feel free to adjust this color
-    // Any other styling you want for the "Signup" text
   },
 });

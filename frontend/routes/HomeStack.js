@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import Auth from "../screens/Auth.js";
 import Doses from "../screens/Doses.js";
 import Manage from "../screens/Manage.js";
-
+import Signup from "../screens/Signup.js";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,7 +28,7 @@ const HomeStack = () => {
         // Reset isLoggedIn when the user logs out
         setIsLoggedIn(false);
         // Navigate to the 'Signin' screen when the user logs out
-        navigation.navigate("Signin");
+        navigation.navigate("Login");
       }
     });
 
@@ -38,10 +38,10 @@ const HomeStack = () => {
 
   return (
     <Stack.Navigator>
-     
-      <Stack.Screen name="Signin" component={Auth} />
-      <Stack.Screen name="Doses" component={Doses} />
-      <Stack.Screen name="Manage" component={Manage} />
+      <Stack.Screen name="Login" component={Auth} />
+      <Stack.Screen name="Doses" component={Doses} options={{ headerShown: true, title: "Track your doses" }} />
+      <Stack.Screen name="Manage" component={Manage} options={{ headerShown: true, title: "Doses" }} />
+      <Stack.Screen name="Signup" component={Signup} options={{ headerShown: true, title: "Login" }} />
     </Stack.Navigator>
   );
 };
