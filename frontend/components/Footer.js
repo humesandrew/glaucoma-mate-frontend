@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useLogout } from "../hooks/useLogout.js";
 
@@ -8,26 +8,34 @@ export default function Footer({ authToken }) {
   const { logout } = useLogout();
 
   const handleManagePress = () => {
-    navigation.navigate("Manage", { authToken: authToken }); // Navigate to the Manage screen
+    if (authToken) {
+      navigation.navigate("Manage", { authToken });
+    } else {
+      // Optionally alert the user or navigate to the login screen
+      Alert.alert("Access Denied", "You must be logged in to access Manage.");
+      // navigation.navigate("Signin");
+    }
   };
 
   const handleLogout = async () => {
-    await logout(); // Call the logout function
+    await logout();
     // Additional logic after logout if needed
   };
 
   return (
     <View style={styles.footer}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Glaucoma-mate</Text>
+        <Text style={styles.title}>IOP Buddy</Text>
       </View>
       <View style={styles.linksContainer}>
         <TouchableOpacity onPress={handleManagePress}>
           <Text style={styles.link}>Manage</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleLogout}>
-          <Text style={styles.link}>Logout</Text>
-        </TouchableOpacity>
+        {authToken && (
+          <TouchableOpacity onPress={handleLogout}>
+            <Text style={styles.link}>Logout</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

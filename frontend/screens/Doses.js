@@ -88,7 +88,7 @@ export default function Doses({ route }) {
     // This function sets up an auth state listener and fetches medications
     const setupAuthListenerAndFetchMedications = () => {
       console.log("Setting up auth state listener and fetching medications");
-  
+
       // Set up auth state listener
       const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
         if (firebaseUser) {
@@ -105,13 +105,16 @@ export default function Doses({ route }) {
                   },
                 }
               );
-  
+
               if (response.ok) {
                 const data = await response.json();
                 setMedications(data);
                 console.log("Medications fetched successfully:", data);
               } else {
-                console.error("Error fetching medications:", response.statusText);
+                console.error(
+                  "Error fetching medications:",
+                  response.statusText
+                );
                 // Attempt to log detailed error message if possible
                 const errorData = await response.json();
                 console.error("Backend Error:", errorData.error);
@@ -126,26 +129,25 @@ export default function Doses({ route }) {
           setMedications([]);
         }
       });
-  
+
       return unsubscribe; // Return the unsubscribe function for cleanup
     };
-  
+
     const unsubscribe = setupAuthListenerAndFetchMedications();
-  
+
     return () => {
       unsubscribe(); // Cleanup on component unmount or before re-running this effect
     };
   }, [authToken]); // Dependency on authToken, assuming it changes on login/logout
-  
 
   return (
     <View style={styles.container}>
       <View style={styles.topContent}>
         <Text style={styles.title}>Welcome back</Text>
       </View>
-      <TouchableOpacity onPress={handleLogout}>
+      {/* <TouchableOpacity onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <View style={styles.centerContent}>
         <Text style={styles.doseTitle}>Doses Taken</Text>
       </View>
