@@ -15,6 +15,7 @@ import { useLogin } from "../hooks/useLogin";
 import { AuthContext } from "../context/AuthContext";
 import { auth } from "../firebase.js";
 import { onAuthStateChanged } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -48,19 +49,45 @@ export default function Signup() {
 
   const handleSubmit = async () => {
     try {
-      const userCredential = await login(email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
+  
       if (user) {
-        dispatch({ type: "LOGIN", payload: user });
-        console.log("User token:", user.firebaseToken);
-        setIsLoggedIn(true); // Update isLoggedIn state
+        console.log("User signed up with Firebase:", user);
+        const authToken = await user.getIdToken();
+        console.log("Firebase Token:", authToken);
+  
+        // Make a request to your backend to create a MongoDB user record
+        const backendResponse = await fetch('https://glaucoma-mate-backend.onrender.com/api/user/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`, // Assuming your backend uses this for validation
+          },
+          body: JSON.stringify({
+            email: user.email, // Include any other user info necessary for your backend
+            firebaseUid: user.uid,
+          }),
+        });
+  
+        if (!backendResponse.ok) {
+          throw new Error('Failed to create user record in MongoDB.');
+        }
+  
+        // Assuming backend responds with user data including MongoDB user ID
+        const mongoUserData = await backendResponse.json();
+        console.log("MongoDB user record created:", mongoUserData);
+  
+        dispatch({ type: "LOGIN", payload: { ...user, mongoUserId: mongoUserData._id } });
+        navigation.navigate("Doses", { authToken });
+  
+        setIsLoggedIn(true);
       }
     } catch (error) {
-      console.error("Login failed with error:", error);
+      console.error("Signup or user record creation failed:", error);
     }
   };
-
+  
   return (
     <TouchableWithoutFeedback
       onPress={() => {
