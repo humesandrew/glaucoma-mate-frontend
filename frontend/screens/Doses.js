@@ -32,26 +32,31 @@ export default function Doses({ route }) {
       today.getDate() === doseDate.getDate()
     );
   };
-  const handleDoseButtonPress = async (medicationId, userId) => {
+  const handleDoseButtonPress = async (medicationId) => {
     console.log("handleDoseButtonPress function called");
     console.log("Medication ID:", medicationId);
-    console.log("User ID:", userId);
-
+    console.log("User ID:", user ? user.firebaseUid : "No user ID");
+  
+    if (!user || !user.firebaseUid) {
+      console.error("No user ID available to log dose.");
+      return; // Stop the function if no user ID is available
+    }
+  
     try {
       if (authToken && auth.currentUser) {
         console.log("Making fetch request...");
-
+  
         const timestamp = new Date().toISOString(); // Get current timestamp
-
+  
         // Construct the request body
         const requestBody = {
           medicationId,
-          user: userId || "", // Use the user ID passed as an argument or default to an empty string
+          user: user.firebaseUid, // Use firebaseUid instead of uid
           timestamp,
         };
-
+  
         console.log("Request Body:", requestBody); // Log the request body before making the fetch request
-
+  
         const requestOptions = {
           method: "POST",
           headers: {
@@ -60,14 +65,14 @@ export default function Doses({ route }) {
           },
           body: JSON.stringify(requestBody),
         };
-
+  
         const response = await fetch(
           "https://glaucoma-mate-backend.onrender.com/api/doses/",
           requestOptions
         );
-
+  
         console.log("Response status:", response.status);
-
+  
         if (response.ok) {
           const responseData = await response.json();
           console.log("Response data:", responseData);
@@ -83,7 +88,7 @@ export default function Doses({ route }) {
       console.error("Error logging dose:", error.message);
     }
   };
-
+  
   useEffect(() => {
     // This function sets up an auth state listener and fetches medications
     const setupAuthListenerAndFetchMedications = () => {
