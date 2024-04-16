@@ -1,61 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "../firebase.js";
 import { useAuthContext } from "../hooks/useAuthContext.js";
-
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
+import { StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity, FlatList } from "react-native";
 import Footer from "../components/Footer.js";
 
 export default function Manage({ route }) {
   const { authToken } = route.params || {};
   const { user } = useAuthContext();
-  const [allMedications, setAllMedications] = useState([]); // New state to store all medications
+  const [allMedications, setAllMedications] = useState([]);
 
   useEffect(() => {
     const fetchAllMedications = async () => {
       try {
-        const response = await fetch(
-          "https://glaucoma-mate-backend.onrender.com/api/medications/",
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch("https://glaucoma-mate-backend.onrender.com/api/medications/", {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch medications");
         }
         const data = await response.json();
-        setAllMedications(data); // Set all medications in the state
+        setAllMedications(data);
         console.log(data);
       } catch (error) {
         console.error(error);
       }
     };
-
     fetchAllMedications();
-  }, [authToken]); // Fetch medications when authToken changes
+  }, [authToken]);
 
   const handleMedicationPress = async (medicationId) => {
     console.log("handleMedicationPress function called");
     console.log("Medication ID:", medicationId);
-    console.log("User ID:", user ? user.uid : null); // Using user from useAuthContext
-    console.log(typeof(user.uid));
-    console.log(authToken);
+    console.log("User ID:", user ? user.firebaseUid : null); // Ensure this matches your backend expectation
+
     try {
       const requestBody = {
         medicationId,
-        userId: user.uid || "", // Convert to string if user is not null
+        userId: user.firebaseUid || "", // Make sure you're using firebaseUid or the correct user identifier
       };
-  
-      console.log("Request body", requestBody);
   
       const requestOptions = {
         method: "POST",
@@ -66,30 +51,23 @@ export default function Manage({ route }) {
         body: JSON.stringify(requestBody),
       };
   
-      const response = await fetch(
-        "https://glaucoma-mate-backend.onrender.com/api/medications/assign",
-        requestOptions
-      );
+      const response = await fetch("https://glaucoma-mate-backend.onrender.com/api/medications/assign", requestOptions);
       console.log("response status:", response.status);
   
-      // Check the response status and handle accordingly
       if (!response.ok) {
-        const errorMessage = await response.text(); // Get the error message from the response body
-        console.error("Failed to assign medication to user:", errorMessage);
-        throw new Error(errorMessage); // Throw the error to be caught in the catch block
+        const errorMessage = await response.json();
+        console.error("Failed to assign medication to user:", errorMessage.error);
+        throw new Error(errorMessage.error);
       }
       const data = await response.json();
-      console.log(data.message); // Log success message
+      console.log(data.message);
     } catch (error) {
       console.error("Error assigning medication to user:", error.message);
-      // Handle error
     }
   };
-  
-  
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Manage Medications</Text>
@@ -97,22 +75,15 @@ export default function Manage({ route }) {
         </View>
         <View style={styles.main}>
           <FlatList
-            data={allMedications} // Use allMedications state instead of medications
-            keyExtractor={(medication) => medication._id}
+            data={allMedications}
+            keyExtractor={(item) => item._id}
             numColumns={2}
             renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={() =>
-                  handleMedicationPress(
-                    item._id, 
-                    user ? user.uid : null
-                  )
-                }
+                onPress={() => handleMedicationPress(item._id)}
                 style={styles.medicationButton}
               >
-                <Text numberOfLines={2} style={styles.medicationText}>
-                  {item.name}
-                </Text>
+                <Text numberOfLines={2} style={styles.medicationText}>{item.name}</Text>
               </TouchableOpacity>
             )}
           />
@@ -122,6 +93,8 @@ export default function Manage({ route }) {
     </TouchableWithoutFeedback>
   );
 }
+
+// Your StyleSheet remains unchanged
 
 const styles = StyleSheet.create({
   container: {
