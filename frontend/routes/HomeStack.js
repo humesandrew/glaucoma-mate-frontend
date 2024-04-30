@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuthContext } from "../hooks/useAuthContext.js";
+import { useNavigation } from "@react-navigation/native";
 import Auth from "../screens/Auth.js";
 import Doses from "../screens/Doses.js";
 import Manage from "../screens/Manage.js";
@@ -12,6 +13,7 @@ const Stack = createNativeStackNavigator();
 
 const HomeStack = () => {
   const { dispatch } = useAuthContext();
+  const navigation = useNavigation(); // Ensure navigation is defined here
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
@@ -35,6 +37,7 @@ const HomeStack = () => {
           const userData = await response.json();
           console.log("Fetched userData:", userData);
           dispatch({ type: 'LOGIN', payload: { ...userData, authToken: token } });
+          navigation.navigate("Doses", { authToken: token }); // Use navigation here
         } catch (error) {
           console.error('Synchronization error:', error);
         }
@@ -44,7 +47,7 @@ const HomeStack = () => {
     });
 
     return () => unsubscribe();
-  }, [dispatch]);
+  }, [dispatch, navigation]); // Include navigation in the dependency array
 
   return (
     <Stack.Navigator>
