@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import {
   StatusBar,
   StyleSheet,
@@ -13,8 +13,6 @@ import { useNavigation } from "@react-navigation/native";
 import Footer from "../components/Footer.js";
 import { useLogin } from "../hooks/useLogin";
 import { AuthContext } from "../context/AuthContext";
-import { auth } from "../firebase.js";
-import { onAuthStateChanged } from "firebase/auth";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -22,39 +20,12 @@ export default function Auth() {
   const { login, isLoading, error } = useLogin();
   const { dispatch } = useContext(AuthContext);
   const navigation = useNavigation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track if user is logged in
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        console.log("User is signed in:", user);
-
-        // Obtain the Firebase authentication token directly from the user
-        const authToken = await user.getIdToken();
-        console.log("Firebase Token:", authToken);
-
-        // Navigate to the Doses screen with authToken as a parameter
-        navigation.navigate("Doses", { authToken });
-        setIsLoggedIn(true); // Set isLoggedIn to true
-      } else {
-        console.log("No user is signed in.");
-        setIsLoggedIn(false); // Set isLoggedIn to false
-      }
-    });
-
-    // Cleanup the listener when the component unmounts
-    return () => unsubscribe();
-  }, [navigation]); // Include navigation in the dependency array to prevent unnecessary re-renders
 
   const handleSubmit = async () => {
     try {
       const userCredential = await login(email, password);
-      const user = userCredential.user;
-
-      if (user) {
-        dispatch({ type: "LOGIN", payload: user });
-        console.log("User token:", user.firebaseToken);
-        setIsLoggedIn(true); // Update isLoggedIn state
+      if (userCredential) {
+        navigation.navigate("Doses");  // Assume successful login navigates to Doses
       }
     } catch (error) {
       console.error("Login failed with error:", error);
@@ -62,32 +33,23 @@ export default function Auth() {
   };
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View style={styles.main}>
           <Text style={styles.title}>Welcome</Text>
           <Text style={styles.subtitle}>This is IOP Buddy</Text>
           <View style={styles.formContainer}>
-            <Text>Email</Text>
             <TextInput
               style={styles.input}
-              onChangeText={(val) => setEmail(val)}
+              onChangeText={setEmail}
+              autoCapitalize="none"
             />
-            <Text>Password</Text>
             <TextInput
               style={styles.input}
-              onChangeText={(val) => setPassword(val)}
-              secureTextEntry // For password fields
+              onChangeText={setPassword}
+              secureTextEntry
             />
-            <TouchableOpacity
-              onPress={handleSubmit}
-              style={styles.button}
-              disabled={isLoading} // Disable the button while loading
-            >
+            <TouchableOpacity onPress={handleSubmit} disabled={isLoading} style={styles.button}>
               <Text style={styles.buttonText}>
                 {isLoading ? "Logging In..." : "Login"}
               </Text>
@@ -98,8 +60,6 @@ export default function Auth() {
                 <Text style={styles.signupText}>Signup</Text>
               </TouchableOpacity>
             </View>
-            {/* <Text>Email entered: {email}</Text>
-            <Text>Password entered: {password}</Text> */}
             {error && <Text style={styles.errorText}>{error}</Text>}
           </View>
         </View>
