@@ -20,7 +20,14 @@ export default function Auth() {
   const { login, isLoading, error } = useLogin();
   const { dispatch } = useContext(AuthContext);
   const navigation = useNavigation();
-
+  const handleTemporaryLogout = () => {
+    auth.signOut().then(() => {
+      console.log("Logged out successfully");
+      // Redirect to login or another appropriate page
+    }).catch((error) => {
+      console.error("Error logging out", error);
+    });
+  }
   const handleSubmit = async () => {
     try {
       const userCredential = await login(email, password);

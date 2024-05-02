@@ -11,21 +11,17 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Footer from "../components/Footer.js";
-import { useSignup } from "../hooks/useSignup"; // Import useSignup instead of useLogin
+import { useSignup } from "../hooks/useSignup";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { signup, isLoading, error, authToken } = useSignup(); // Use the useSignup hook
   const navigation = useNavigation();
+  const navigateToDoses = () => navigation.navigate("Doses"); // Define navigation callback
+  const { signup, isLoading, error } = useSignup(navigateToDoses); // Pass navigateToDoses to useSignup
 
   const handleSubmit = async () => {
-    // Attempt to signup and check if it was successful
-    await signup(email, password);
-    // Navigate to Doses page with authToken if signup was successful
-    if (authToken) {
-      navigation.navigate("Doses", { authToken });
-    }
+    await signup(email, password);  // This will handle navigation on success
   };
 
   return (
@@ -61,6 +57,8 @@ export default function Signup() {
     </TouchableWithoutFeedback>
   );
 }
+
+// Include your styles if necessary
 
 // Styles can largely remain unchanged, though ensure they match your UI/UX design
 
