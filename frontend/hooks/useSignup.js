@@ -3,7 +3,7 @@ import { useAuthContext } from './useAuthContext';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 
-export const useSignup = () => {
+export const useSignup = (navigateToDoses) => {  // Accept navigation callback as parameter
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { dispatch } = useAuthContext();
@@ -19,7 +19,6 @@ export const useSignup = () => {
       // Obtain the Firebase authentication token
       const authToken = await firebaseUser.getIdToken();
 
-      // Here, instead of console.logging, directly proceed with backend call
       const backendResponse = await fetch('https://glaucoma-mate-backend.onrender.com/api/user/signup', {
         method: 'POST',
         headers: {
@@ -37,26 +36,20 @@ export const useSignup = () => {
         throw new Error(errorResponse.error || 'Failed to create user record in MongoDB.');
       }
 
-      // Assuming backend signup also responds with necessary user data
       const mongoUserData = await backendResponse.json();
-      
-      // Prepare userData for the context, including the authToken
+
       const userData = {
         ...mongoUserData,
-        authToken, // Include authToken directly in userData
+        authToken,
         firebaseUser: {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
         },
       };
 
-      // Dispatch LOGIN action with userData, including authToken
       dispatch({ type: 'LOGIN', payload: userData });
       setIsLoading(false);
-
-      // Optionally, if you need to navigate to Doses page or elsewhere after signup,
-      // pass the authToken as a parameter or ensure it's accessible in the global context.
-      // This part depends on your app's routing and state management setup.
+      navigateToDoses(); // Navigate after successful signup and login
     } catch (error) {
       console.error('Error during signup:', error);
       setIsLoading(false);
