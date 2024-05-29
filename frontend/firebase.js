@@ -1,10 +1,22 @@
-// Import the functions you need from the SDKs you need
+// firebase.js
+
 import { initializeApp } from "firebase/app";
-import { getAuth } from 'firebase/auth';
+import { initializeAuth, getAuth, onAuthStateChanged } from "firebase/auth";
+import * as SecureStore from 'expo-secure-store';
 
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// Custom persistence layer using Expo Secure Store
+const secureStorePersistence = {
+  type: 'LOCAL',
+  async setItem(key, value) {
+    await SecureStore.setItemAsync(key, value);
+  },
+  async getItem(key) {
+    return await SecureStore.getItemAsync(key);
+  },
+  async removeItem(key) {
+    await SecureStore.deleteItemAsync(key);
+  }
+};
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,5 +31,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth(app); // Initialize the authentication module
+// Initialize Firebase Auth with custom persistence
+const auth = initializeAuth(app, {
+  persistence: secureStorePersistence
+});
 
+export { auth, getAuth, onAuthStateChanged };
