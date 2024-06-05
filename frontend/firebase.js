@@ -21,3 +21,4 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app); // Initialize the authentication module
 
+//lets try this again without expo secure in 1 go//
