@@ -36,4 +36,6 @@ const auth = initializeAuth(app, {
   persistence: secureStorePersistence
 });
 
+
 export { auth, getAuth, onAuthStateChanged };
+
