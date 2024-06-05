@@ -21,3 +21,4 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app); // Initialize the authentication module
 
+//so i reverted this to pre-expo secure store on 6/4/24//
