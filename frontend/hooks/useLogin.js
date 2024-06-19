@@ -1,8 +1,8 @@
-// useLogin.js
 import { useState } from 'react';
 import { useAuthContext } from './useAuthContext';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const useLogin = () => {
   const [error, setError] = useState(null);
@@ -19,18 +19,36 @@ export const useLogin = () => {
 
       if (user) {
         // User is already logged in via Firebase
-        const userData = {
-          firebaseUser: {
-            uid: user.uid,
-            email: user.email,
-            // Add other necessary user data from Firebase
-          },
-        };
+        const authToken = await AsyncStorage.getItem('authToken');
+        if (authToken) {
+          const response = await fetch('https://glaucoma-mate-backend.onrender.com/api/user/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authToken}`,
+            },
+          });
 
-        // Dispatch login action
-        dispatch({ type: 'LOGIN', payload: userData });
-        setIsLoading(false);
-        return;
+          if (!response.ok) {
+            const errData = await response.json();
+            throw new Error("Failed to synchronize with backend: " + errData.error);
+          }
+
+          const json = await response.json();
+
+          const userData = {
+            ...json,
+            firebaseUser: {
+              uid: user.uid,
+              email: user.email,
+            },
+          };
+
+          // Dispatch login action
+          dispatch({ type: 'LOGIN', payload: userData });
+          setIsLoading(false);
+          return;
+        }
       }
 
       // User is not logged in via Firebase, proceed with authentication
@@ -39,7 +57,11 @@ export const useLogin = () => {
 
       // Obtain the Firebase authentication token
       const authToken = await userCredential.user.getIdToken();
-     console.log(authToken);
+      console.log(authToken);
+
+      // Save the authToken to AsyncStorage
+      await AsyncStorage.setItem('authToken', authToken);
+
       // Send the authentication token to your backend for validation
       const response = await fetch('https://glaucoma-mate-backend.onrender.com/api/user/login', {
         method: 'POST',
