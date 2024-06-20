@@ -54,7 +54,7 @@ const HomeStack = () => {
     <Stack.Navigator>
       <Stack.Screen name="Login" component={Auth} />
       <Stack.Screen name="Doses" component={Doses} options={{ headerShown: true, title: "Track your doses" }} />
-      <Stack.Screen name="Manage" component={Manage} options={{ headerShown: true, title: "Manage Medications" }} />
+      <Stack.Screen name="Manage" component={Manage} options={{ headerShown: true, title: "Manage medications" }} />
       <Stack.Screen name="Signup" component={Signup} options={{ headerShown: true, title: "Signup" }} />
     </Stack.Navigator>
   );

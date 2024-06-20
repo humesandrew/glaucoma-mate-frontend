@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "../firebase.js";
 import { useAuthContext } from "../hooks/useAuthContext.js";
-import { StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity, FlatList } from "react-native";
+import { StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity, FlatList, Alert } from "react-native";
 import Footer from "../components/Footer.js";
 
 export default function Manage({ route }) {
@@ -61,8 +61,10 @@ export default function Manage({ route }) {
       }
       const data = await response.json();
       console.log(data.message);
+      Alert.alert("Success", "Medication assigned successfully");
     } catch (error) {
       console.error("Error assigning medication to user:", error.message);
+      Alert.alert("Error", `Failed to assign medication: ${error.message}`);
     }
   };
 
@@ -88,7 +90,7 @@ export default function Manage({ route }) {
             )}
           />
         </View>
-        <Footer />
+        <Footer authToken={authToken}/>
       </View>
     </TouchableWithoutFeedback>
   );
