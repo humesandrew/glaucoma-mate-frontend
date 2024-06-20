@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { auth } from "../firebase.js";
 import { useAuthContext } from "../hooks/useAuthContext.js";
 import { useLogout } from "../hooks/useLogout.js";
@@ -13,51 +13,79 @@ import {
 } from "react-native";
 import Footer from "../components/Footer.js";
 
-export default function Doses({ route }) {
+export default function Doses({ route, navigation }) {
   const { authToken } = route.params || {};
   const { logout } = useLogout();
   const [medications, setMedications] = useState([]); // Initialize medications state
   const { user } = useAuthContext(); // Access user data from AuthContext
-  // const userId = auth.currentUser.uid; // Retrieve Firebase UID
+
   const handleLogout = async () => {
     await logout(); // Call the logout function
-    // Additional logic after logout if needed
   };
-  // Function to check if a dose has been taken today
-  const isDoseTakenToday = (doseTimestamp) => {
-    const today = new Date();
-    const doseDate = new Date(doseTimestamp);
-    return (
-      today.getFullYear() === doseDate.getFullYear() &&
-      today.getMonth() === doseDate.getMonth() &&
-      today.getDate() === doseDate.getDate()
-    );
-  };
-  const handleDoseButtonPress = async (medicationId) => {
-    console.log("handleDoseButtonPress function called");
-    console.log("Medication ID:", medicationId);
-    console.log("User ID:", user ? user.firebaseUid : "No user ID");
-  
-    if (!user || !user.firebaseUid) {
-      console.error("No user ID available to log dose.");
-      return; // Stop the function if no user ID is available
+
+  const fetchMedications = useCallback(async () => {
+    try {
+      if (authToken) {
+        const response = await fetch(
+          "https://glaucoma-mate-backend.onrender.com/api/medications/assigned",
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setMedications(data);
+          console.log("Medications fetched successfully:", data);
+        } else {
+          console.error(
+            "Error fetching medications:",
+            response.statusText
+          );
+          const errorData = await response.json();
+          console.error("Backend Error:", errorData.error);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching medications:", error.message);
     }
-  
+  }, [authToken]);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+      if (firebaseUser) {
+        await fetchMedications();
+      } else {
+        setMedications([]);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [fetchMedications]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchMedications();
+    });
+
+    return unsubscribe;
+  }, [navigation, fetchMedications]);
+
+  const handleDoseButtonPress = async (medicationId) => {
     try {
       if (authToken && auth.currentUser) {
-        console.log("Making fetch request...");
-  
         const timestamp = new Date().toISOString(); // Get current timestamp
-  
-        // Construct the request body
         const requestBody = {
           medicationId,
           user: user.firebaseUid, // Use firebaseUid instead of uid
           timestamp,
         };
-  
-        console.log("Request Body:", requestBody); // Log the request body before making the fetch request
-  
+
         const requestOptions = {
           method: "POST",
           headers: {
@@ -66,23 +94,21 @@ export default function Doses({ route }) {
           },
           body: JSON.stringify(requestBody),
         };
-  
+
         const response = await fetch(
           "https://glaucoma-mate-backend.onrender.com/api/doses/",
           requestOptions
         );
-  
-        console.log("Response status:", response.status);
-  
+
         if (response.ok) {
           const responseData = await response.json();
-          console.log("Response data:", responseData);
           console.log("Dose logged successfully");
           Alert.alert("Success", "Dose taken")
+          await fetchMedications(); // Re-fetch medications to update the state
         } else {
           const errorData = await response.json();
           console.log("Failed to log dose:", errorData.error);
-          Alert.alert("Maximum dosage reached.", "You do not need to take any more today.");
+          Alert.alert("Maximum dosage reached", "You do not need to take any more today")
         }
       } else {
         console.log("authToken or auth.currentUser is missing");
@@ -91,71 +117,12 @@ export default function Doses({ route }) {
       console.error("Error logging dose:", error.message);
     }
   };
-  
-  useEffect(() => {
-    // This function sets up an auth state listener and fetches medications
-    const setupAuthListenerAndFetchMedications = () => {
-      console.log("Setting up auth state listener and fetching medications");
-
-      // Set up auth state listener
-      const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
-        if (firebaseUser) {
-          console.log("User is logged in:", firebaseUser);
-          // User is logged in, proceed to fetch medications
-          try {
-            if (authToken) {
-              const response = await fetch(
-                "https://glaucoma-mate-backend.onrender.com/api/medications/assigned",
-                {
-                  headers: {
-                    Authorization: `Bearer ${authToken}`,
-                    "Content-Type": "application/json",
-                  },
-                }
-              );
-
-              if (response.ok) {
-                const data = await response.json();
-                setMedications(data);
-                console.log("Medications fetched successfully:", data);
-              } else {
-                console.error(
-                  "Error fetching medications:",
-                  response.statusText
-                );
-                // Attempt to log detailed error message if possible
-                const errorData = await response.json();
-                console.error("Backend Error:", errorData.error);
-              }
-            }
-          } catch (error) {
-            console.error("Error fetching medications:", error.message);
-          }
-        } else {
-          // User is not logged in, clear medications
-          console.log("User is logged out");
-          setMedications([]);
-        }
-      });
-
-      return unsubscribe; // Return the unsubscribe function for cleanup
-    };
-
-    const unsubscribe = setupAuthListenerAndFetchMedications();
-
-    return () => {
-      unsubscribe(); // Cleanup on component unmount or before re-running this effect
-    };
-  }, [authToken]); // Dependency on authToken, assuming it changes on login/logout
 
   return (
     <View style={styles.container}>
       <View style={styles.topContent}>
         <Text style={styles.title}>Welcome back</Text>
       </View>
-      {/* <TouchableOpacity onPress={handleLogout}>
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity> */}
       <View style={styles.centerContent}>
         <Text style={styles.doseTitle}>Doses Taken</Text>
       </View>
@@ -197,7 +164,6 @@ export default function Doses({ route }) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
