@@ -1,7 +1,7 @@
-// useLogout.js
 import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { auth } from "../firebase";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const useLogout = () => {
   const [error, setError] = useState(null);
@@ -15,6 +15,9 @@ export const useLogout = () => {
     try {
       // Use Firebase to sign out the user
       await auth.signOut();
+
+      // Clear the auth token from AsyncStorage
+      await AsyncStorage.removeItem('authToken');
 
       // Dispatch logout action
       dispatch({ type: "LOGOUT" });

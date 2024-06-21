@@ -9,6 +9,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Alert
 } from "react-native";
 import Footer from "../components/Footer.js";
 
@@ -77,9 +78,11 @@ export default function Doses({ route }) {
           const responseData = await response.json();
           console.log("Response data:", responseData);
           console.log("Dose logged successfully");
+          Alert.alert("Success", "Dose taken")
         } else {
           const errorData = await response.json();
-          console.error("Failed to log dose:", errorData.error);
+          console.log("Failed to log dose:", errorData.error);
+          Alert.alert("Maximum dosage reached.", "You do not need to take any more today.");
         }
       } else {
         console.log("authToken or auth.currentUser is missing");
