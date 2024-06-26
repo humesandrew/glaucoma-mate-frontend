@@ -83,7 +83,7 @@ export default function Manage({ route }) {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => handleMedicationPress(item._id)}
-                style={styles.medicationButton}
+                style={[styles.medicationButton, { borderColor: item.capColor }]} // Set border color dynamically
               >
                 <Text numberOfLines={2} style={styles.medicationText}>{item.name}</Text>
               </TouchableOpacity>
@@ -129,6 +129,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 5, // Adjust horizontal spacing between buttons
     alignItems: "center",
     width: "45%", // Set width for buttons to fit two columns
+    borderWidth: 2, // Add border width to see the border color
+    borderRadius: 10, // Adjust border radius as needed
   },
   medicationText: {
     textAlign: "center",
