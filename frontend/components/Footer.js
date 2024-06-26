@@ -28,9 +28,9 @@ export default function Footer({ authToken }) {
         <Text style={styles.title}>IOP Buddy</Text>
       </View>
       <View style={styles.linksContainer}>
-        <TouchableOpacity onPress={handleManagePress}>
+        {authToken && <TouchableOpacity onPress={handleManagePress}>
           <Text style={styles.link}>Manage</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>}
         {authToken && (
           <TouchableOpacity onPress={handleLogout}>
             <Text style={styles.link}>Logout</Text>
