@@ -132,21 +132,20 @@ export default function Doses({ route }) {
             console.error("Error fetching medications:", error.message);
           }
         } else {
-          // User is not logged in, clear medications
           console.log("User is logged out");
           setMedications([]);
         }
       });
 
-      return unsubscribe; // Return the unsubscribe function for cleanup
+      return unsubscribe; 
     };
 
     const unsubscribe = setupAuthListenerAndFetchMedications();
 
     return () => {
-      unsubscribe(); // Cleanup on component unmount or before re-running this effect
+      unsubscribe(); 
     };
-  }, [authToken]); // Dependency on authToken, assuming it changes on login/logout
+  }, [authToken]); 
 
   return (
     <View style={styles.container}>
@@ -162,7 +161,7 @@ export default function Doses({ route }) {
       <ScrollView style={styles.scrollView}>
         <View style={styles.medicationsContainer}>
           {medications.map((medication, index) => (
-            <View style={styles.doseBox} key={index}>
+            <View style={[styles.doseBox, { backgroundColor: medication.capColor }]} key={index}>
               <View style={styles.medicationInfo}>
                 <View style={styles.medInfoLeft}>
                   <Text>{medication.name}</Text>
