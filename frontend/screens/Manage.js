@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { auth } from "../firebase.js";
 import { useAuthContext } from "../hooks/useAuthContext.js";
 import { StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity, FlatList, Alert } from "react-native";
 import Footer from "../components/Footer.js";
 
-export default function Manage({ route }) {
-  const { authToken } = route.params || {};
+export default function Manage({ route, navigation }) {
+  const { authToken, refreshMedications } = route.params || {}; // <-- Accept refreshMedications callback
   const { user } = useAuthContext();
   const [allMedications, setAllMedications] = useState([]);
 
@@ -62,6 +61,8 @@ export default function Manage({ route }) {
       const data = await response.json();
       console.log(data.message);
       Alert.alert("Success", "Medication assigned successfully");
+      refreshMedications(); // <-- Call the refresh callback
+      navigation.goBack(); // <-- Navigate back to the previous screen
     } catch (error) {
       console.error("Error assigning medication to user:", error.message);
       Alert.alert("Error", `Failed to assign medication: ${error.message}`);
@@ -129,8 +130,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5, // Adjust horizontal spacing between buttons
     alignItems: "center",
     width: "45%", // Set width for buttons to fit two columns
-    borderWidth: 2, // Add border width to see the border color
-    borderRadius: 10, // Adjust border radius as needed
+    borderWidth: 2, // Add border width
   },
   medicationText: {
     textAlign: "center",
