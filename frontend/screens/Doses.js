@@ -20,6 +20,18 @@ export default function Doses({ route, navigation }) {
 
   const handleLogout = async () => {
     await logout(); // Call the logout function
+    // Additional logic after logout if needed
+  };
+
+  // Function to check if a dose has been taken today
+  const isDoseTakenToday = (doseTimestamp) => {
+    const today = new Date();
+    const doseDate = new Date(doseTimestamp);
+    return (
+      today.getFullYear() === doseDate.getFullYear() &&
+      today.getMonth() === doseDate.getMonth() &&
+      today.getDate() === doseDate.getDate()
+    );
   };
 
   const fetchMedications = useCallback(async () => {
@@ -120,6 +132,15 @@ export default function Doses({ route, navigation }) {
           console.log("Response data:", responseData);
           console.log("Dose logged successfully");
           Alert.alert("Success", "Dose taken");
+
+          // Update the medication state directly instead of refetching all medications
+          setMedications((prevMedications) =>
+            prevMedications.map((medication) =>
+              medication._id === medicationId
+                ? { ...medication, dosesTakenToday: (medication.dosesTakenToday || 0) + 1 }
+                : medication
+            )
+          );
         } else {
           const errorData = await response.json();
           console.log("Failed to log dose:", errorData.error);
@@ -149,6 +170,7 @@ export default function Doses({ route, navigation }) {
                 <View style={styles.medInfoLeft}>
                   <Text>{medication.name}</Text>
                   <Text>Dosage: {medication.dosage}</Text>
+                  <Text>Doses Taken Today: {medication.dosesTakenToday || 0}</Text>
                 </View>
                 <View style={styles.doseButtonsContainer}>
                   {[...Array(medication.dosage + 1)].map((_, i) => (
@@ -246,5 +268,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 30,
     marginTop: 20,
+  },
+  doseButtonTaken: {
+    backgroundColor: "darkblue",
   },
 });
