@@ -12,7 +12,7 @@ import { getIdToken } from "firebase/auth";
 const Stack = createNativeStackNavigator();
 
 const HomeStack = () => {
-  const { dispatch } = useAuthContext();
+  const { user, dispatch } = useAuthContext();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -52,10 +52,17 @@ const HomeStack = () => {
 
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Login" component={Auth} />
-      <Stack.Screen name="Doses" component={Doses} options={{ headerShown: true, title: "Track your doses" }} />
-      <Stack.Screen name="Manage" component={Manage} options={{ headerShown: true, title: "Manage medications" }} />
-      <Stack.Screen name="Signup" component={Signup} options={{ headerShown: true, title: "Signup" }} />
+      {!user ? ( // Only show the login and signup screens if the user is not logged in
+        <>
+          <Stack.Screen name="Login" component={Auth} />
+          <Stack.Screen name="Signup" component={Signup} options={{ headerShown: true, title: "Signup" }} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Doses" component={Doses} options={{ headerShown: true, title: "Track your doses" }} />
+          <Stack.Screen name="Manage" component={Manage} options={{ headerShown: true, title: "Manage medications" }} />
+        </>
+      )}
     </Stack.Navigator>
   );
 };
