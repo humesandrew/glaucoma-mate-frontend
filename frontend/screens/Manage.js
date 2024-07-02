@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity, Fla
 import Footer from "../components/Footer.js";
 
 export default function Manage({ route, navigation }) {
-  const { authToken, refreshMedications } = route.params || {}; // <-- Accept refreshMedications callback
+  const { authToken } = route.params || {}; // <-- Accept refreshMedications callback
   const { user } = useAuthContext();
   const [allMedications, setAllMedications] = useState([]);
 
@@ -61,7 +61,6 @@ export default function Manage({ route, navigation }) {
       const data = await response.json();
       console.log(data.message);
       Alert.alert("Success", "Medication assigned successfully");
-      refreshMedications(); // <-- Call the refresh callback
       navigation.goBack(); // <-- Navigate back to the previous screen
     } catch (error) {
       console.error("Error assigning medication to user:", error.message);

@@ -131,7 +131,7 @@ export default function Doses({ route, navigation }) {
           const responseData = await response.json();
           console.log("Response data:", responseData);
           console.log("Dose logged successfully");
-          Alert.alert("Success", "Dose taken");
+          Alert.alert("Success", "Dose stored in database.");
 
           // Update the medication state directly instead of refetching all medications
           setMedications((prevMedications) =>
