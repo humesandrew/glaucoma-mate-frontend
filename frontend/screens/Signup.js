@@ -21,7 +21,7 @@ export default function Signup() {
   const { signup, isLoading, error } = useSignup(navigateToDoses); // Pass navigateToDoses to useSignup
 
   const handleSubmit = async () => {
-    await signup(email, password);  // This will handle navigation on success
+    await signup(email, password, (params) => navigation.navigate("Doses", params)); // Pass navigateToDoses callback
   };
 
   return (
