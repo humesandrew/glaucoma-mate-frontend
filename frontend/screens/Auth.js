@@ -44,7 +44,7 @@ export default function Auth() {
       <View style={styles.container}>
         <View style={styles.main}>
           <Text style={styles.title}>Welcome</Text>
-          <Text style={styles.subtitle}>This is IOP Buddy</Text>
+          <Text style={styles.subtitle}>This is Glacuoma Buddy</Text>
           <View style={styles.formContainer}>
             <TextInput
               style={styles.input}

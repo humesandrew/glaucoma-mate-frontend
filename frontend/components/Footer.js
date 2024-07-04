@@ -25,7 +25,7 @@ export default function Footer({ authToken }) {
   return (
     <View style={styles.footer}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>IOP Buddy</Text>
+        <Text style={styles.title}>Glaucoma Buddy</Text>
       </View>
       <View style={styles.linksContainer}>
         {authToken && <TouchableOpacity onPress={handleManagePress}>
