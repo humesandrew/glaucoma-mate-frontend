@@ -22,6 +22,9 @@ export default function Doses({ route, navigation }) {
     await logout(); // Call the logout function
     // Additional logic after logout if needed
   };
+  const handleTakeAllButtonPress = () => {
+    Alert.alert("Info", "Feature not programmed yet.");
+  };
 
   // Function to check if a dose has been taken today
   const isDoseTakenToday = (doseTimestamp) => {
@@ -169,11 +172,11 @@ export default function Doses({ route, navigation }) {
               <View style={styles.medicationInfo}>
                 <View style={styles.medInfoLeft}>
                   <Text>{medication.name}</Text>
-                  <Text>Dosage: {medication.dosage}</Text>
-                  <Text>Doses Taken Today: {medication.dosesTakenToday || 0}</Text>
+                  <Text>Drops per day: {medication.dosage}</Text>
+                  <Text>Doses Taken: {medication.dosesTakenToday || 0}</Text>
                 </View>
                 <View style={styles.doseButtonsContainer}>
-                  {[...Array(medication.dosage + 1)].map((_, i) => (
+                  {[...Array(medication.dosage)].map((_, i) => (
                     <TouchableOpacity
                       onPress={() => {
                         handleDoseButtonPress(
@@ -190,6 +193,17 @@ export default function Doses({ route, navigation }) {
                       <Text>{i + 1}</Text>
                     </TouchableOpacity>
                   ))}
+                   <TouchableOpacity
+                    onPress={() => {
+                      handleTakeAllButtonPress(
+                        medication._id,
+                        user ? user.uid : null
+                      );
+                    }}
+                    style={styles.takeAllButton}
+                  >
+                    <Text style={styles.takeAllButtonText}>Take All</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>
@@ -271,5 +285,15 @@ const styles = StyleSheet.create({
   },
   doseButtonTaken: {
     backgroundColor: "darkblue",
+  },
+  takeAllButton: {
+    backgroundColor: "green",
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  takeAllButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
