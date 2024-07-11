@@ -171,7 +171,7 @@ export default function Doses({ route, navigation }) {
             <View style={[styles.doseBox, { backgroundColor: medication.capColor }]} key={index}>
               <View style={styles.medicationInfo}>
                 <View style={styles.medInfoLeft}>
-                  <Text>{medication.name}</Text>
+                  <Text style={styles.medicationName}>{medication.name}</Text>
                   <Text>Drops per day: {medication.dosage}</Text>
                   <Text>Doses Taken: {medication.dosesTakenToday || 0}</Text>
                 </View>
@@ -265,18 +265,24 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginLeft: 10, // Add margin to the left
   },
+  medicationName: {
+    fontWeight: "bold", // Make the medication name bold
+  },
   doseButtonsContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   doseButton: {
     backgroundColor: "lightgray",
-    padding: 5,
-    borderRadius: "50%",
+    width: 30, // Set width
+    height: 30, // Set height
+    borderRadius: 15, // Half of width/height to make it circular
     marginLeft: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   lastDoseButton: {
-    marginRight: 10,
+    marginRight: 20,
   },
   doseTitle: {
     fontWeight: "bold",
@@ -287,13 +293,17 @@ const styles = StyleSheet.create({
     backgroundColor: "darkblue",
   },
   takeAllButton: {
-    backgroundColor: "green",
+    backgroundColor: "lightgray",
     padding: 10,
     borderRadius: 5,
-    marginLeft: 10,
+    marginLeft: 20,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
   takeAllButtonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: "black",
+    textAlign: "center"
+    
   },
 });
