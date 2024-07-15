@@ -4,10 +4,10 @@
     "slug": "glaucoma-mate-frontend",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/glaucomabuddylogo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/glaucomabuddysplash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -15,16 +15,23 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.humesandrew.glaucomamatefrontend"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/glaucomabuddylogo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.humesandrew.glaucomamatefrontend"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/glaucomabuddylogo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6522e1ff-cbea-45da-862b-bb6788b2168e"
+      }
     }
   }
 }
