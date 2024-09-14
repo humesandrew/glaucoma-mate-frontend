@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0, // Ensure the footer extends to the right edge of the screen
-    height: 50,
+    height: 75,
     backgroundColor: "coral",
     flexDirection: "row", // Arrange items horizontally
     alignItems: "center",
