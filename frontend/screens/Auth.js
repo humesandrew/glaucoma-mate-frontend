@@ -44,7 +44,8 @@ export default function Auth() {
       <View style={styles.container}>
         <View style={styles.main}>
           <Text style={styles.title}>Welcome</Text>
-          <Text style={styles.subtitle}>This is Glacuoma Buddy</Text>
+          <Text style={styles.subtitle}>This is Glaucoma Buddy</Text>
+          <Text>An app to help you manage and track your dosage of glaucoma eye drops. Developed by Andy Humes, humes.andrew@gmail.com.</Text>
           <View style={styles.formContainer}>
             <TextInput
               style={styles.input}
@@ -81,37 +82,40 @@ export default function Auth() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 0,
     alignItems: "center",
     justifyContent: "center",
-  },
-  formContainer: {
-    alignItems: "center",
-    marginTop: 20,
+    paddingHorizontal: 20,  // Add padding to prevent content from touching the edges
   },
   main: {
     flex: 1,
     justifyContent: "center",
+    width: '100%',  // Ensure the main container takes the full available width
+    paddingHorizontal: 20,  // Apply horizontal padding
   },
   title: {
     fontWeight: "bold",
     fontSize: 50,
+    textAlign: "center",  // Center the title text
   },
   subtitle: {
     fontStyle: "italic",
+    textAlign: "center",  // Center the subtitle text
   },
   input: {
     borderWidth: 1,
     borderColor: "#777",
     padding: 8,
-    margin: 10,
-    width: 300,
+    marginVertical: 10,  // Apply vertical margin
+    width: '100%',  // Input takes full width of the form container
+    maxWidth: 300,  // Max width for better control on large screens
   },
   button: {
     backgroundColor: "blue",
     padding: 10,
     borderRadius: 5,
     marginTop: 20,
+    width: '100%',  // Button takes full width
+    maxWidth: 300,  // Max width for the button
     alignItems: "center",
   },
   buttonText: {
@@ -121,13 +125,15 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginTop: 10,
+    textAlign: "center",  // Center the error text
   },
   signupPromptContainer: {
-    marginTop: 10, // Adjust this value as needed to create space
-    alignItems: "center", // This centers the text and button if that's what you want
+    marginTop: 20,  // Adjust this value as needed to create space
+    flexDirection: "row",  // Align text and button in a row if needed
+    justifyContent: "center",  // Center content horizontally
   },
   signupText: {
-    color: "blue", // Feel free to adjust this color
-    // Any other styling you want for the "Signup" text
+    color: "blue",
+    marginLeft: 5,  // Add space between text "Not a user yet?" and "Signup"
   },
 });

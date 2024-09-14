@@ -46,6 +46,7 @@ export default function Signup() {
               secureTextEntry
               autoCapitalize="none"
             />
+            <Text>For your security, password must include a capital letter, a lower case letter, and a special character.</Text>
             <TouchableOpacity onPress={handleSubmit} disabled={isLoading} style={styles.button}>
               <Text style={styles.buttonText}>{isLoading ? "Signing Up..." : "Signup"}</Text>
             </TouchableOpacity>
@@ -67,37 +68,41 @@ export default function Signup() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 0,
     alignItems: "center",
     justifyContent: "center",
-  },
-  formContainer: {
-    alignItems: "center",
-    marginTop: 20,
+    paddingHorizontal: 20,  // Ensure there is padding on the sides of the screen
   },
   main: {
     flex: 1,
     justifyContent: "center",
+    width: '100%',  // Ensure main container takes full available width
+    paddingHorizontal: 20,  // Apply horizontal padding
   },
   title: {
     fontWeight: "bold",
     fontSize: 50,
+    textAlign: "center",  // Ensure title is centered
   },
-  subtitle: {
-    fontStyle: "italic",
+  formContainer: {
+    width: '100%',  // Set width to 100% of its container
+    maxWidth: 300,  // Max width can help to not stretch on larger screens
+    alignSelf: 'center',  // Center the form container
+    alignItems: "center",
+    marginTop: 20,
   },
   input: {
     borderWidth: 1,
     borderColor: "#777",
     padding: 8,
-    margin: 10,
-    width: 300,
+    marginVertical: 10,  // Consistent vertical margin
+    width: '100%',  // Inputs take full width of the form container
   },
   button: {
     backgroundColor: "blue",
     padding: 10,
     borderRadius: 5,
     marginTop: 20,
+    width: '100%',  // Button takes full width
     alignItems: "center",
   },
   buttonText: {
