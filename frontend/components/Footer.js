@@ -46,18 +46,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     left: 0,
-    width: "100%",
+    right: 0, // Ensure the footer extends to the right edge of the screen
     height: 50,
     backgroundColor: "coral",
     flexDirection: "row", // Arrange items horizontally
     alignItems: "center",
     justifyContent: "space-between", // Distribute items evenly along the main axis
-    paddingHorizontal: 20, // Add padding horizontally
+    paddingHorizontal: 20, // Maintain horizontal padding for internal spacing
   },
   titleContainer: {
-    flex: 1, // Take up remaining space
-    justifyContent: "center", // Center content vertically
-    alignItems: "center", // Center content horizontally
+    flex: 1, // Allow this container to grow and fill space
+    justifyContent: "center", // Center content vertically within the container
+    alignItems: "center", // Center content horizontally within the container
   },
   title: {
     color: "#fff",
@@ -65,12 +65,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   linksContainer: {
-    flexDirection: "row", // Arrange items horizontally
+    flexDirection: "row", // Layout links horizontally
   },
   link: {
     color: "#fff",
     fontSize: 16,
-    marginLeft: 20,
-    // Add some space between the links
+    marginLeft: 20, // Add spacing between links
   },
 });
