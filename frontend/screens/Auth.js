@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import {
+  Image,
   StatusBar,
   StyleSheet,
   Text,
@@ -41,21 +42,30 @@ export default function Auth() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      
       <View style={styles.container}>
+      <Image
+            source={require('../assets/glaucomabuddylogo.png')}
+            style={styles.logo}
+            resizeMode="cover"
+          />
         <View style={styles.main}>
-          <Text style={styles.title}>Welcome</Text>
-          <Text style={styles.subtitle}>This is Glaucoma Buddy</Text>
-          <Text>An app to help you manage and track your dosage of glaucoma eye drops. Developed by Andy Humes, humes.andrew@gmail.com.</Text>
+      
+          {/* <Text style={styles.title}>Glaucoma Buddy</Text> */}
+          <Text style={styles.subtitle}>An app to help you manage and track your dosage of glaucoma eye drops. Developed by Andy Humes, humes.andrew@gmail.com. </Text>
+          {/* <Text>Developed by Andy Humes, humes.andrew@gmail.com.</Text> */}
           <View style={styles.formContainer}>
             <TextInput
               style={styles.input}
               onChangeText={setEmail}
               autoCapitalize="none"
+              placeholder="Email"
             />
             <TextInput
               style={styles.input}
               onChangeText={setPassword}
               secureTextEntry
+              placeholder="Password"
             />
             <TouchableOpacity onPress={handleSubmit} disabled={isLoading} style={styles.button}>
               <Text style={styles.buttonText}>
@@ -84,22 +94,24 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 20,  // Add padding to prevent content from touching the edges
+    paddingHorizontal: 0,  // Maintain padding to prevent content from touching the edges
   },
   main: {
     flex: 1,
     justifyContent: "center",
     width: '100%',  // Ensure the main container takes the full available width
-    paddingHorizontal: 20,  // Apply horizontal padding
+    paddingHorizontal: 50,  // Apply horizontal padding
   },
-  title: {
-    fontWeight: "bold",
-    fontSize: 50,
-    textAlign: "center",  // Center the title text
+  logo: {
+    width: '100%',  // Use the full width of the container
+    height: '50%',  // Use 50% of the screen height
+    marginBottom: -70,  // Apply negative margin if needed to pull the subtitle up
   },
   subtitle: {
     fontStyle: "italic",
-    textAlign: "center",  // Center the subtitle text
+    textAlign: "left", 
+    marginTop: 0,  // Ensure there's no top margin adding space
+    marginBottom: 10,  // Minimize the bottom margin
   },
   input: {
     borderWidth: 1,
@@ -113,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: "blue",
     padding: 10,
     borderRadius: 5,
-    marginTop: 20,
+    marginTop: 10,
     width: '100%',  // Button takes full width
     maxWidth: 300,  // Max width for the button
     alignItems: "center",
