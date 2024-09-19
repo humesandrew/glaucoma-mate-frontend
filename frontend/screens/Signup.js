@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Image,
   StatusBar,
   StyleSheet,
   Text,
@@ -27,10 +28,17 @@ export default function Signup() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
+      <Image
+            source={require('../assets/glaucomabuddylogo.png')}
+            style={styles.logo}
+            resizeMode="cover"
+          />
         <StatusBar style="auto" />
         <View style={styles.main}>
           <Text style={styles.title}>Signup</Text>
+          
           <View style={styles.formContainer}>
+          <Text style={styles.subtitle}>For your security, password must include a capital letter, a lower case letter, and a special character.</Text>
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -46,7 +54,7 @@ export default function Signup() {
               secureTextEntry
               autoCapitalize="none"
             />
-            <Text>For your security, password must include a capital letter, a lower case letter, and a special character.</Text>
+            
             <TouchableOpacity onPress={handleSubmit} disabled={isLoading} style={styles.button}>
               <Text style={styles.buttonText}>{isLoading ? "Signing Up..." : "Signup"}</Text>
             </TouchableOpacity>
@@ -70,7 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 20,  // Ensure there is padding on the sides of the screen
+    paddingHorizontal: 0,  // Maintain padding to prevent content from touching the edges
   },
   main: {
     flex: 1,
@@ -83,12 +91,23 @@ const styles = StyleSheet.create({
     fontSize: 50,
     textAlign: "center",  // Ensure title is centered
   },
+  subtitle: {
+    fontStyle: "italic",
+    textAlign: "left", 
+    marginTop: 5,  // Ensure there's no top margin adding space
+    marginBottom: 0,  // Minimize the bottom margin
+  },
   formContainer: {
     width: '100%',  // Set width to 100% of its container
     maxWidth: 300,  // Max width can help to not stretch on larger screens
     alignSelf: 'center',  // Center the form container
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 0,
+  },
+  logo: {
+    width: '100%',
+    height: '50%',
+    marginBottom: -90,
   },
   input: {
     borderWidth: 1,
@@ -101,7 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: "blue",
     padding: 10,
     borderRadius: 5,
-    marginTop: 20,
+    marginTop: 10,
     width: '100%',  // Button takes full width
     alignItems: "center",
   },
