@@ -55,7 +55,7 @@ export default function Manage({ route, navigation }) {
   
       if (!response.ok) {
         const errorMessage = await response.json();
-        console.error("Failed to assign medication to user:", errorMessage.error);
+        // console.error("Failed to assign medication to user:", errorMessage.error);
         throw new Error(errorMessage.error);
       }
       const data = await response.json();
@@ -63,7 +63,7 @@ export default function Manage({ route, navigation }) {
       Alert.alert("Success", "Medication assigned successfully");
       navigation.goBack(); // <-- Navigate back to the previous screen
     } catch (error) {
-      console.error("Error assigning medication to user:", error.message);
+      // console.error("Error assigning medication to user:", error.message);
       Alert.alert("Error", `Failed to assign medication: ${error.message}`);
     }
   };
