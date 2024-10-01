@@ -13,6 +13,15 @@ export const useSignup = () => {
     setIsLoading(true);
     setError(null);
 
+   // Check if the password meets the criteria
+   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+   if (!passwordRegex.test(password)) {
+    Alert.alert("Password does not meet requirements");
+ 
+       setIsLoading(false);
+     
+       return;
+   }
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const firebaseUser = userCredential.user;

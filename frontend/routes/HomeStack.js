@@ -39,7 +39,7 @@ const HomeStack = () => {
           dispatch({ type: 'LOGIN', payload: { ...userData, authToken: token } });
           navigation.navigate("Doses", { authToken: token }); // Navigate to Doses on successful login
         } catch (error) {
-          console.error('Synchronization error:', error);
+          // console.error('Synchronization error:', error);
         }
       } else {
         dispatch({ type: "LOGOUT" });

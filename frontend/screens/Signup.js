@@ -38,7 +38,7 @@ export default function Signup() {
           <Text style={styles.title}>Signup</Text>
           
           <View style={styles.formContainer}>
-          <Text style={styles.subtitle}>For your security, password must include a capital letter, a lower case letter, and a special character.</Text>
+          <Text style={styles.subtitle}>For your security, password must be at least 8 characters and include a capital letter, a lower case letter, and a special character.</Text>
             <TextInput
               style={styles.input}
               placeholder="Email"
