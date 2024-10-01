@@ -22,9 +22,52 @@ export default function Doses({ route, navigation }) {
     await logout(); // Call the logout function
     // Additional logic after logout if needed
   };
-  const handleTakeAllButtonPress = () => {
-    Alert.alert("Info", "Feature not programmed yet.");
+  const handleTakeAllButtonPress = async (medicationId) => {
+    try {
+      if (!user || !user.firebaseUid) {
+        console.error("No user ID available to take all doses.");
+        return; // Stop the function if no user ID is available
+      }
+  
+      if (authToken && auth.currentUser) {
+        const requestBody = {
+          medicationId,
+          user: user.firebaseUid, // Use firebaseUid instead of uid
+        };
+  
+        const requestOptions = {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        };
+  
+        const response = await fetch(
+          "https://glaucoma-mate-backend.onrender.com/api/doses/takeAll",
+          requestOptions
+        );
+  
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log("All doses taken successfully:", responseData);
+          Alert.alert("Success", "All remaining doses taken for today.");
+          fetchMedications(); // Refresh medications list to reflect the new doses
+        } else {
+          const errorData = await response.json();
+          console.error("Failed to take all doses:", errorData.error);
+          Alert.alert("Error", errorData.error);
+        }
+      } else {
+        console.error("authToken or auth.currentUser is missing");
+      }
+    } catch (error) {
+      console.error("Error taking all doses:", error.message);
+      Alert.alert("Error", "Failed to take all doses.");
+    }
   };
+  
 
   // Function to check if a dose has been taken today
   const isDoseTakenToday = (doseTimestamp) => {
@@ -193,17 +236,12 @@ export default function Doses({ route, navigation }) {
                       <Text>{i + 1}</Text>
                     </TouchableOpacity>
                   ))}
-                   <TouchableOpacity
-                    onPress={() => {
-                      handleTakeAllButtonPress(
-                        medication._id,
-                        user ? user.uid : null
-                      );
-                    }}
-                    style={styles.takeAllButton}
-                  >
-                    <Text style={styles.takeAllButtonText}>Take All</Text>
-                  </TouchableOpacity>
+              <TouchableOpacity
+  onPress={() => handleTakeAllButtonPress(medication._id)}
+  style={styles.takeAllButton}
+>
+  <Text style={styles.takeAllButtonText}>Take All</Text>
+</TouchableOpacity>
                 </View>
               </View>
             </View>
