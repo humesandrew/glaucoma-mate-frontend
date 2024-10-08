@@ -8,7 +8,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
-  Alert
+  Alert,
 } from "react-native";
 import Footer from "../components/Footer.js";
 
@@ -28,13 +28,13 @@ export default function Doses({ route, navigation }) {
         console.error("No user ID available to take all doses.");
         return; // Stop the function if no user ID is available
       }
-  
+
       if (authToken && auth.currentUser) {
         const requestBody = {
           medicationId,
           user: user.firebaseUid, // Use firebaseUid instead of uid
         };
-  
+
         const requestOptions = {
           method: "POST",
           headers: {
@@ -43,12 +43,12 @@ export default function Doses({ route, navigation }) {
           },
           body: JSON.stringify(requestBody),
         };
-  
+
         const response = await fetch(
           "https://glaucoma-mate-backend.onrender.com/api/doses/takeAll",
           requestOptions
         );
-  
+
         if (response.ok) {
           const responseData = await response.json();
           console.log("All doses taken successfully:", responseData);
@@ -67,7 +67,6 @@ export default function Doses({ route, navigation }) {
       Alert.alert("Error", "Failed to take all doses.");
     }
   };
-  
 
   // Function to check if a dose has been taken today
   const isDoseTakenToday = (doseTimestamp) => {
@@ -98,10 +97,7 @@ export default function Doses({ route, navigation }) {
           setMedications(data);
           console.log("Medications fetched successfully:", data);
         } else {
-          console.error(
-            "Error fetching medications:",
-            response.statusText
-          );
+          console.error("Error fetching medications:", response.statusText);
           const errorData = await response.json();
           console.error("Backend Error:", errorData.error);
         }
@@ -127,7 +123,7 @@ export default function Doses({ route, navigation }) {
 
   // Add navigation listener for focusing the screen
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', fetchMedications);
+    const unsubscribe = navigation.addListener("focus", fetchMedications);
 
     return unsubscribe;
   }, [navigation, fetchMedications]);
@@ -183,14 +179,20 @@ export default function Doses({ route, navigation }) {
           setMedications((prevMedications) =>
             prevMedications.map((medication) =>
               medication._id === medicationId
-                ? { ...medication, dosesTakenToday: (medication.dosesTakenToday || 0) + 1 }
+                ? {
+                    ...medication,
+                    dosesTakenToday: (medication.dosesTakenToday || 0) + 1,
+                  }
                 : medication
             )
           );
         } else {
           const errorData = await response.json();
           console.log("Failed to log dose:", errorData.error);
-          Alert.alert("Maximum dosage reached.", "You do not need to take any more today.");
+          Alert.alert(
+            "Maximum dosage reached.",
+            "You do not need to take any more today."
+          );
         }
       } else {
         console.log("authToken or auth.currentUser is missing");
@@ -199,61 +201,62 @@ export default function Doses({ route, navigation }) {
       console.error("Error logging dose:", error.message);
     }
   };
-
   return (
     <View style={styles.container}>
-      <View style={styles.topContent}>
-        <Text style={styles.title}>Welcome back</Text>
-      </View>
       <View style={styles.centerContent}>
-        <Text style={styles.doseTitle}>Doses Taken</Text>
+        <Text style={styles.doseTitle}>Click bubble to log a dose</Text>
       </View>
       <ScrollView style={styles.scrollView}>
-        <View style={styles.medicationsContainer}>
-          {medications.map((medication, index) => (
-            <View style={[styles.doseBox, { backgroundColor: medication.capColor }]} key={index}>
+        {medications.map((medication, index) => (
+          <View style={styles.medicationOuterContainer} key={index}>
+            <View
+              style={[styles.doseBox, { backgroundColor: medication.capColor }]}
+            >
               <View style={styles.medicationInfo}>
                 <View style={styles.medInfoLeft}>
                   <Text style={styles.medicationName}>{medication.name}</Text>
-                  <Text>Drops per day: {medication.dosage}</Text>
-                  <Text>Doses Taken: {medication.dosesTakenToday || 0}</Text>
                 </View>
                 <View style={styles.doseButtonsContainer}>
                   {[...Array(medication.dosage)].map((_, i) => (
                     <TouchableOpacity
-                      onPress={() => {
-                        handleDoseButtonPress(
-                          medication._id,
-                          user ? user.uid : null
-                        );
-                      }}
-                      style={[
-                        styles.doseButton,
-                        i === medication.dosage ? styles.lastDoseButton : null,
-                      ]}
+                      onPress={() => handleDoseButtonPress(medication._id)}
+                      style={[styles.doseButton, i === medication.dosage ? styles.lastDoseButton : null]}
                       key={i}
                     >
                       <Text>{i + 1}</Text>
                     </TouchableOpacity>
                   ))}
-              <TouchableOpacity
-  onPress={() => handleTakeAllButtonPress(medication._id)}
-  style={styles.takeAllButton}
->
-  <Text style={styles.takeAllButtonText}>Take All</Text>
-</TouchableOpacity>
                 </View>
               </View>
             </View>
-          ))}
-        </View>
+            <TouchableOpacity
+              onPress={() => handleTakeAllButtonPress(medication._id)}
+              style={styles.takeAllButtonOutside}
+            >
+              <Text style={styles.takeAllButtonText}>Take All</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
       </ScrollView>
       <Footer authToken={authToken} />
     </View>
   );
+  
 }
 
 const styles = StyleSheet.create({
+  medicationOuterContainer: {
+    flexDirection: 'row',  // Aligns children (doseBox and Take All button) in a row
+    justifyContent: 'space-between',  // Puts space between the doseBox and the Take All button
+    alignItems: 'center',  // Aligns items vertically
+    marginBottom: 0,  // Adds space between each medication entry
+  },
+  takeAllButtonOutside: {
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: 'lightgrey',  // Make it visually distinct
+  },
+  
   container: {
     flex: 1,
     alignItems: "center",
@@ -283,22 +286,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 20,
     marginTop: 20,
+    position: "relative",
   },
   medicationInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
+    paddingRight: 60,
   },
-  doseBox: {
-    borderWidth: 2,
-    borderRadius: 25,
-    borderColor: "blue",
-    backgroundColor: "lightblue",
-    padding: 8,
-    marginVertical: 10,
-    width: "100%",
-  },
+doseBox: {
+  borderWidth: 2,
+  borderRadius: 25,
+  borderColor: "blue",
+  backgroundColor: "lightblue",
+  padding: 8,
+  marginVertical: 10,
+  width: '80%', // Reducing width to allow space for the Take All button
+  marginRight: 10, // Add right margin to push Take All button a bit to the right
+},
   medInfoLeft: {
     alignItems: "flex-start",
     marginLeft: 10, // Add margin to the left
@@ -308,7 +314,7 @@ const styles = StyleSheet.create({
   },
   doseButtonsContainer: {
     flexDirection: "row",
-    alignItems: "center",
+   
   },
   doseButton: {
     backgroundColor: "lightgray",
@@ -325,12 +331,17 @@ const styles = StyleSheet.create({
   doseTitle: {
     fontWeight: "bold",
     fontSize: 30,
-    marginTop: 20,
+    marginTop: 15,
+    marginBottom: 15
   },
   doseButtonTaken: {
     backgroundColor: "darkblue",
   },
   takeAllButton: {
+    position: "absolute", // Position the button absolutely to float it on the right
+    right: 10, // Distance from the right edge of the doseBox
+    top: "50%", // Center it vertically
+    transform: [{ translateY: -17 }], // Adjust vertical centering
     backgroundColor: "lightgray",
     padding: 10,
     borderRadius: 5,
@@ -341,7 +352,6 @@ const styles = StyleSheet.create({
   },
   takeAllButtonText: {
     color: "black",
-    textAlign: "center"
-    
+    textAlign: "center",
   },
 });
