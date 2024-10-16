@@ -210,7 +210,7 @@ export default function Doses({ route, navigation }) {
         {medications.map((medication, index) => (
           <View style={styles.medicationOuterContainer} key={index}>
             <View
-              style={[styles.doseBox, { backgroundColor: medication.capColor }]}
+              style={[styles.doseBox, { backgroundColor: medication.capColor, borderColor: medication.capColor }]}
             >
               <View style={styles.medicationInfo}>
                 <View style={styles.medInfoLeft}>
@@ -248,8 +248,9 @@ const styles = StyleSheet.create({
   medicationOuterContainer: {
     flexDirection: 'row',  // Align children (doseBox and Take All button) in a row
     justifyContent: 'space-between',  // Space between the doseBox and the Take All button
-    alignItems: 'center',  // Aligns items vertically
+    alignItems: 'center',  // Align items vertically
     marginBottom: 0,  // Adds space between each medication entry
+    width: '100%',  // Ensures that the row takes up the full width
   },
   takeAllButtonOutside: {
     padding: 10,
@@ -296,22 +297,20 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   medicationInfo: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    paddingRight: 60,
+    flexDirection: 'row',  // Ensures the dose buttons are on the same row as the name
+    justifyContent: 'space-between',  // Ensure both the name and buttons are aligned within the row
+    alignItems: 'center',  // Vertically center the content
+    flex: 1,  // Makes sure this takes up the remaining width
   },
   doseBox: {
+    flex: 1,  // Takes up the remaining space in the row
     borderWidth: 2,
     borderRadius: 25,
-    borderColor: "blue",
-    backgroundColor: "lightblue",
     padding: 8,
     marginVertical: 10,
     marginLeft: 10,
-    width: '68%',  // Allowing room for the Take All button
     borderRadius: 10,
+    // Remove width here to allow it to flex
   },
   medInfoLeft: {
     alignItems: "flex-start",
@@ -321,8 +320,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold", // Make the medication name bold
   },
   doseButtonsContainer: {
-    flexDirection: "row",
-   
+    flexDirection: "row",  // Align dose buttons in a row
+    justifyContent: "flex-end",   // Push buttons to the right
+    alignItems: "center",         // Align buttons vertically
+    flex: 1,  // This ensures the container fills the remaining space inside medicationInfo
   },
   doseButton: {
     backgroundColor: "lightgray",
