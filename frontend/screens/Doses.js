@@ -210,17 +210,27 @@ export default function Doses({ route, navigation }) {
         {medications.map((medication, index) => (
           <View style={styles.medicationOuterContainer} key={index}>
             <View
-              style={[styles.doseBox, { backgroundColor: medication.capColor, borderColor: medication.capColor }]}
+              style={[
+                styles.doseBox,
+                {
+                  backgroundColor: medication.capColor,
+                  borderColor: medication.capColor,
+                },
+              ]}
             >
               <View style={styles.medicationInfo}>
                 <View style={styles.medInfoLeft}>
                   <Text style={styles.medicationName}>{medication.name}</Text>
+                  <Text style={styles.brandName}>{medication.name}</Text>
                 </View>
                 <View style={styles.doseButtonsContainer}>
                   {[...Array(medication.dosage)].map((_, i) => (
                     <TouchableOpacity
                       onPress={() => handleDoseButtonPress(medication._id)}
-                      style={[styles.doseButton, i === medication.dosage ? styles.lastDoseButton : null]}
+                      style={[
+                        styles.doseButton,
+                        i === medication.dosage ? styles.lastDoseButton : null,
+                      ]}
                       key={i}
                     >
                       <Text>{i + 1}</Text>
@@ -241,30 +251,29 @@ export default function Doses({ route, navigation }) {
       <Footer authToken={authToken} />
     </View>
   );
-  
 }
 
 const styles = StyleSheet.create({
   medicationOuterContainer: {
-    flexDirection: 'row',  // Align children (doseBox and Take All button) in a row
-    justifyContent: 'space-between',  // Space between the doseBox and the Take All button
-    alignItems: 'center',  // Align items vertically
-    marginBottom: 0,  // Adds space between each medication entry
-    width: '100%',  // Ensures that the row takes up the full width
+    flexDirection: "row", // Align children (doseBox and Take All button) in a row
+    justifyContent: "space-between", // Space between the doseBox and the Take All button
+    alignItems: "center", // Align items vertically
+    marginBottom: 0, // Adds space between each medication entry
+    width: "100%", // Ensures that the row takes up the full width
   },
   takeAllButtonOutside: {
     padding: 10,
     borderRadius: 10,
-    backgroundColor: 'lightgrey',  // Make it visually distinct
-    justifyContent: 'center',  // Center the text vertically
-    alignItems: 'center',
-  marginRight: 10,
-  marginLeft: 10, 
-     // Space between doseBox and Take All button
-    height: 50,  // Set a fixed height for the button
-    width: 90,   // Optional: Set a fixed width to control size
+    backgroundColor: "lightgrey", // Make it visually distinct
+    justifyContent: "center", // Center the text vertically
+    alignItems: "center",
+    marginRight: 10,
+    marginLeft: 10,
+    // Space between doseBox and Take All button
+    height: 50, // Set a fixed height for the button
+    width: 90, // Optional: Set a fixed width to control size
   },
-  
+
   container: {
     flex: 1,
     alignItems: "center",
@@ -297,13 +306,13 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   medicationInfo: {
-    flexDirection: 'row',  // Ensures the dose buttons are on the same row as the name
-    justifyContent: 'space-between',  // Ensure both the name and buttons are aligned within the row
-    alignItems: 'center',  // Vertically center the content
-    flex: 1,  // Makes sure this takes up the remaining width
+    flexDirection: "row", // Ensures the dose buttons are on the same row as the name
+    justifyContent: "space-between", // Ensure both the name and buttons are aligned within the row
+    alignItems: "center", // Vertically center the content
+    flex: 1, // Makes sure this takes up the remaining width
   },
   doseBox: {
-    flex: 1,  // Takes up the remaining space in the row
+    flex: 1, // Takes up the remaining space in the row
     borderWidth: 2,
     borderRadius: 25,
     padding: 8,
@@ -320,10 +329,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold", // Make the medication name bold
   },
   doseButtonsContainer: {
-    flexDirection: "row",  // Align dose buttons in a row
-    justifyContent: "flex-end",   // Push buttons to the right
-    alignItems: "center",         // Align buttons vertically
-    flex: 1,  // This ensures the container fills the remaining space inside medicationInfo
+    flexDirection: "row", // Align dose buttons in a row
+    justifyContent: "flex-end", // Push buttons to the right
+    alignItems: "center", // Align buttons vertically
+    flex: 1, // This ensures the container fills the remaining space inside medicationInfo
   },
   doseButton: {
     backgroundColor: "lightgray",
@@ -341,7 +350,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 30,
     marginTop: 15,
-    marginBottom: 15
+    marginBottom: 15,
   },
   doseButtonTaken: {
     backgroundColor: "darkblue",
