@@ -246,15 +246,22 @@ export default function Doses({ route, navigation }) {
 
 const styles = StyleSheet.create({
   medicationOuterContainer: {
-    flexDirection: 'row',  // Aligns children (doseBox and Take All button) in a row
-    justifyContent: 'space-between',  // Puts space between the doseBox and the Take All button
+    flexDirection: 'row',  // Align children (doseBox and Take All button) in a row
+    justifyContent: 'space-between',  // Space between the doseBox and the Take All button
     alignItems: 'center',  // Aligns items vertically
     marginBottom: 0,  // Adds space between each medication entry
   },
   takeAllButtonOutside: {
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     backgroundColor: 'lightgrey',  // Make it visually distinct
+    justifyContent: 'center',  // Center the text vertically
+    alignItems: 'center',
+  marginRight: 10,
+  marginLeft: 10, 
+     // Space between doseBox and Take All button
+    height: 50,  // Set a fixed height for the button
+    width: 90,   // Optional: Set a fixed width to control size
   },
   
   container: {
@@ -295,16 +302,17 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingRight: 60,
   },
-doseBox: {
-  borderWidth: 2,
-  borderRadius: 25,
-  borderColor: "blue",
-  backgroundColor: "lightblue",
-  padding: 8,
-  marginVertical: 10,
-  width: '80%', // Reducing width to allow space for the Take All button
-  marginRight: 10, // Add right margin to push Take All button a bit to the right
-},
+  doseBox: {
+    borderWidth: 2,
+    borderRadius: 25,
+    borderColor: "blue",
+    backgroundColor: "lightblue",
+    padding: 8,
+    marginVertical: 10,
+    marginLeft: 10,
+    width: '68%',  // Allowing room for the Take All button
+    borderRadius: 10,
+  },
   medInfoLeft: {
     alignItems: "flex-start",
     marginLeft: 10, // Add margin to the left
@@ -338,14 +346,15 @@ doseBox: {
     backgroundColor: "darkblue",
   },
   takeAllButton: {
-    position: "absolute", // Position the button absolutely to float it on the right
-    right: 10, // Distance from the right edge of the doseBox
+    // position: "absolute", // Position the button absolutely to float it on the right
+    // right: 10, // Distance from the right edge of the doseBox
     top: "50%", // Center it vertically
     transform: [{ translateY: -17 }], // Adjust vertical centering
     backgroundColor: "lightgray",
     padding: 10,
     borderRadius: 5,
-    marginLeft: 20,
+    marginLeft: 0,
+    marginRight: 10,
     height: 50,
     justifyContent: "center",
     alignItems: "center",
