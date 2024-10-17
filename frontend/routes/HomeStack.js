@@ -21,22 +21,30 @@ const HomeStack = () => {
         try {
           const token = await getIdToken(firebaseUser);
           console.log("HomeStack token:", token);
-          const response = await fetch('https://glaucoma-mate-backend.onrender.com/api/user/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
+          const response = await fetch(
+            "https://glaucoma-mate-backend.onrender.com/api/user/login",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
             }
-          });
+          );
 
           if (!response.ok) {
             const errData = await response.json();
-            throw new Error("Failed to synchronize with backend: " + errData.error);
+            throw new Error(
+              "Failed to synchronize with backend: " + errData.error
+            );
           }
 
           const userData = await response.json();
           console.log("Fetched userData:", userData);
-          dispatch({ type: 'LOGIN', payload: { ...userData, authToken: token } });
+          dispatch({
+            type: "LOGIN",
+            payload: { ...userData, authToken: token },
+          });
           navigation.navigate("Doses", { authToken: token }); // Navigate to Doses on successful login
         } catch (error) {
           // console.error('Synchronization error:', error);
@@ -55,12 +63,24 @@ const HomeStack = () => {
       {!user ? ( // Only show the login and signup screens if the user is not logged in
         <>
           <Stack.Screen name="Login" component={Auth} />
-          <Stack.Screen name="Signup" component={Signup} options={{ headerShown: true, title: "Signup" }} />
+          <Stack.Screen
+            name="Signup"
+            component={Signup}
+            options={{ headerShown: true, title: "Signup" }}
+          />
         </>
       ) : (
         <>
-          <Stack.Screen name="Doses" component={Doses} options={{ headerShown: true, title: "Track your doses" }} />
-          <Stack.Screen name="Manage" component={Manage} options={{ headerShown: true, title: "Manage medications" }} />
+          <Stack.Screen
+            name="Doses"
+            component={Doses}
+            options={{ headerShown: true, title: "Track your doses" }}
+          />
+          <Stack.Screen
+            name="Manage"
+            component={Manage}
+            options={{ headerShown: true, title: "Manage medications" }}
+          />
         </>
       )}
     </Stack.Navigator>
