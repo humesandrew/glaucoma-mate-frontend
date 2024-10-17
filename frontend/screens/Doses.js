@@ -221,7 +221,8 @@ export default function Doses({ route, navigation }) {
               <View style={styles.medicationInfo}>
                 <View style={styles.medInfoLeft}>
                   <Text style={styles.medicationName}>{medication.name}</Text>
-                  <Text style={styles.brandName}>{medication.name}</Text>
+                  <Text style={styles.brandName}>{medication.brand}</Text>
+                  <Text style={styles.brandName}>{medication.sig}</Text>
                 </View>
                 <View style={styles.doseButtonsContainer}>
                   {[...Array(medication.dosage)].map((_, i) => (
@@ -258,8 +259,9 @@ const styles = StyleSheet.create({
     flexDirection: "row", // Align children (doseBox and Take All button) in a row
     justifyContent: "space-between", // Space between the doseBox and the Take All button
     alignItems: "center", // Align items vertically
-    marginBottom: 0, // Adds space between each medication entry
     width: "100%", // Ensures that the row takes up the full width
+    padding: 6,
+    
   },
   takeAllButtonOutside: {
     padding: 10,
@@ -315,10 +317,10 @@ const styles = StyleSheet.create({
     flex: 1, // Takes up the remaining space in the row
     borderWidth: 2,
     borderRadius: 25,
-    padding: 8,
-    marginVertical: 10,
+    padding: 6,
+    marginVertical: 6,
     marginLeft: 10,
-    borderRadius: 10,
+    borderRadius: 12,
     // Remove width here to allow it to flex
   },
   medInfoLeft: {
@@ -326,8 +328,17 @@ const styles = StyleSheet.create({
     marginLeft: 10, // Add margin to the left
   },
   medicationName: {
-    fontWeight: "bold", // Make the medication name bold
+    fontWeight: "bold",      // Keep it bold
+    fontSize: 22,            // Increase the font size
+    color: "#333",           // Use a dark gray color for better readability
+    marginBottom: 9,         // Add some space below the name
   },
+  brandName: {
+    fontSize: 14,
+    color: "#333",  // Subtle text for brand name
+    marginTop: 2,
+  },
+  
   doseButtonsContainer: {
     flexDirection: "row", // Align dose buttons in a row
     justifyContent: "flex-end", // Push buttons to the right
