@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",      // Keep it bold
     fontSize: 22,            // Increase the font size
     color: "#333",           // Use a dark gray color for better readability
-    marginBottom: 9,         // Add some space below the name
+    marginBottom: 18,         // Add some space below the name
   },
   brandName: {
     fontSize: 14,
