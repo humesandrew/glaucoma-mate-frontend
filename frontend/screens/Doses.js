@@ -56,7 +56,7 @@ export default function Doses({ route, navigation }) {
           fetchMedications(); // Refresh medications list to reflect the new doses
         } else {
           const errorData = await response.json();
-          console.error("Failed to take all doses:", errorData.error);
+
           Alert.alert("Error", errorData.error);
         }
       } else {
@@ -261,9 +261,11 @@ const styles = StyleSheet.create({
     alignItems: "center", // Align items vertically
     width: "100%", // Ensures that the row takes up the full width
     padding: 6,
-    
   },
   takeAllButtonOutside: {
+    // Make the button take up the available space
+    // Match the height of the medication container
+
     padding: 10,
     borderRadius: 10,
     backgroundColor: "lightgrey", // Make it visually distinct
@@ -272,7 +274,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginLeft: 10,
     // Space between doseBox and Take All button
-    height: 50, // Set a fixed height for the button
+    height: 100, // Set a fixed height for the button
     width: 90, // Optional: Set a fixed width to control size
   },
 
@@ -314,7 +316,7 @@ const styles = StyleSheet.create({
     flex: 1, // Makes sure this takes up the remaining width
   },
   doseBox: {
-    flex: 1, // Takes up the remaining space in the row
+    flex: 3, // Takes up the remaining space in the row
     borderWidth: 2,
     borderRadius: 25,
     padding: 6,
@@ -328,17 +330,17 @@ const styles = StyleSheet.create({
     marginLeft: 10, // Add margin to the left
   },
   medicationName: {
-    fontWeight: "bold",      // Keep it bold
-    fontSize: 22,            // Increase the font size
-    color: "#333",           // Use a dark gray color for better readability
-    marginBottom: 18,         // Add some space below the name
+    fontWeight: "bold", // Keep it bold
+    fontSize: 22, // Increase the font size
+    color: "#333", // Use a dark gray color for better readability
+    marginBottom: 18, // Add some space below the name
   },
   brandName: {
     fontSize: 14,
-    color: "#333",  // Subtle text for brand name
+    color: "#333", // Subtle text for brand name
     marginTop: 2,
   },
-  
+
   doseButtonsContainer: {
     flexDirection: "row", // Align dose buttons in a row
     justifyContent: "flex-end", // Push buttons to the right
@@ -367,10 +369,8 @@ const styles = StyleSheet.create({
     backgroundColor: "darkblue",
   },
   takeAllButton: {
-    // position: "absolute", // Position the button absolutely to float it on the right
-    // right: 10, // Distance from the right edge of the doseBox
-    top: "50%", // Center it vertically
-    transform: [{ translateY: -17 }], // Adjust vertical centering
+    top: "50%",
+    transform: [{ translateY: -17 }],
     backgroundColor: "lightgray",
     padding: 10,
     borderRadius: 5,
