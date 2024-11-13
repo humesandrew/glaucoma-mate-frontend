@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../hooks/useAuthContext.js";
-import { StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity, FlatList, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  FlatList,
+  Alert,
+} from "react-native";
 import Footer from "../components/Footer.js";
 
 export default function Manage({ route, navigation }) {
@@ -11,12 +19,15 @@ export default function Manage({ route, navigation }) {
   useEffect(() => {
     const fetchAllMedications = async () => {
       try {
-        const response = await fetch("https://glaucoma-mate-backend.onrender.com/api/medications/", {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          "https://glaucoma-mate-backend.onrender.com/api/medications/",
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch medications");
         }
@@ -40,7 +51,7 @@ export default function Manage({ route, navigation }) {
         medicationId,
         userId: user.firebaseUid || "", // Make sure you're using firebaseUid or the correct user identifier
       };
-  
+
       const requestOptions = {
         method: "POST",
         headers: {
@@ -49,10 +60,13 @@ export default function Manage({ route, navigation }) {
         },
         body: JSON.stringify(requestBody),
       };
-  
-      const response = await fetch("https://glaucoma-mate-backend.onrender.com/api/medications/assign", requestOptions);
+
+      const response = await fetch(
+        "https://glaucoma-mate-backend.onrender.com/api/medications/assign",
+        requestOptions
+      );
       console.log("response status:", response.status);
-  
+
       if (!response.ok) {
         const errorMessage = await response.json();
         // console.error("Failed to assign medication to user:", errorMessage.error);
@@ -80,17 +94,26 @@ export default function Manage({ route, navigation }) {
             data={allMedications}
             keyExtractor={(item) => item._id}
             numColumns={2}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <TouchableOpacity
                 onPress={() => handleMedicationPress(item._id)}
-                style={[styles.medicationButton, { borderColor: item.capColor }]} // Set border color dynamically
+                style={[
+                  styles.medicationButton,
+                  {
+                    borderColor: item.capColor,
+                    backgroundColor: item.capColor,
+                    marginLeft: index % 2 === 0 ? 10 : 5,
+                    marginRight: index % 2 !== 0 ? 10 : 10,
+                  },
+                ]}
               >
-                <Text numberOfLines={2} style={styles.medicationText}>{item.name}</Text>
+                <Text style={styles.medicationText}>{item.name}</Text>
+                <Text style={styles.brandName}>{item.brand}</Text>
               </TouchableOpacity>
             )}
           />
         </View>
-        <Footer authToken={authToken}/>
+        <Footer authToken={authToken} />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -126,12 +149,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#DDDDDD",
     padding: 10,
     marginBottom: 10,
-    marginHorizontal: 5, // Adjust horizontal spacing between buttons
+    marginHorizontal: 5,
+
     alignItems: "center",
-    width: "45%", // Set width for buttons to fit two columns
-    borderWidth: 2, // Add border width
+    width: "45%", // Set width for two-column layout
+    borderWidth: 2,
+    borderRadius: 12,
+    height: 70, // Set a fixed height to make all buttons the same size
+    justifyContent: "center", // Center content vertically
   },
   medicationText: {
     textAlign: "center",
+    fontWeight: "bold",
+  },
+  brandName: {
+    fontSize: 14,
+    color: "#333", // Subtle text for brand name
+    marginTop: 2,
+    fontStyle: "italic",
   },
 });
