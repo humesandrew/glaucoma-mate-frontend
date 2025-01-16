@@ -9,7 +9,8 @@
     "splash": {
       "image": "./assets/glaucomabuddysplash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "newArchEnabled": true
     },
     "assetBundlePatterns": [
       "**/*"
@@ -32,6 +33,10 @@
       "eas": {
         "projectId": "6522e1ff-cbea-45da-862b-bb6788b2168e"
       }
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ]
   }
 }
