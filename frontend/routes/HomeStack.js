@@ -19,8 +19,9 @@ const HomeStack = () => {
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
       if (firebaseUser) {
         try {
-          const token = await getIdToken(firebaseUser);
+          const token = await getIdToken(firebaseUser, true);
           console.log("HomeStack token:", token);
+  
           const response = await fetch(
             "https://glaucoma-mate-backend.onrender.com/api/user/login",
             {
@@ -31,33 +32,35 @@ const HomeStack = () => {
               },
             }
           );
-
-          if (!response.ok) {
+  
+          if (response.ok) {
+            const userData = await response.json();
+            console.log("Fetched userData:", userData);
+  
+            dispatch({
+              type: "LOGIN",
+              payload: { ...userData, authToken: token },
+            });
+  
+            // Navigate only if the user is successfully synchronized
+            navigation.navigate("Doses", { authToken: token });
+          } else {
+            console.error("Failed to synchronize with backend:", response.statusText);
             const errData = await response.json();
-            throw new Error(
-              "Failed to synchronize with backend: " + errData.error
-            );
+            console.error("Error details:", errData.error);
           }
-
-          const userData = await response.json();
-          console.log("Fetched userData:", userData);
-          dispatch({
-            type: "LOGIN",
-            payload: { ...userData, authToken: token },
-          });
-          navigation.navigate("Doses", { authToken: token }); // Navigate to Doses on successful login
         } catch (error) {
-          // console.error('Synchronization error:', error);
+          console.error("Error in token synchronization:", error.message);
         }
       } else {
         dispatch({ type: "LOGOUT" });
-        navigation.navigate("Login"); // Navigate to Login on logout
+        navigation.navigate("Login");
       }
     });
-
+  
     return () => unsubscribe();
-  }, [dispatch, navigation]); // Include navigation in the dependency array
-
+  }, [dispatch, navigation]);
+  
   return (
     <Stack.Navigator>
       {!user ? ( // Only show the login and signup screens if the user is not logged in
