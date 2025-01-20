@@ -12,7 +12,7 @@ import {
 import Footer from "../components/Footer.js";
 
 export default function Manage({ route, navigation }) {
-  const { authToken } = route.params || {}; 
+  const { authToken } = route.params || {}; // <-- Accept refreshMedications callback
   const { user } = useAuthContext();
   const [allMedications, setAllMedications] = useState([]);
 
@@ -44,12 +44,12 @@ export default function Manage({ route, navigation }) {
   const handleMedicationPress = async (medicationId) => {
     console.log("handleMedicationPress function called");
     console.log("Medication ID:", medicationId);
-    console.log("User ID:", user ? user.firebaseUid : null); 
+    console.log("User ID:", user ? user.firebaseUid : null); // Ensure this matches your backend expectation
 
     try {
       const requestBody = {
         medicationId,
-        userId: user.firebaseUid || "", 
+        userId: user.firebaseUid || "", // Make sure you're using firebaseUid or the correct user identifier
       };
 
       const requestOptions = {
@@ -69,13 +69,15 @@ export default function Manage({ route, navigation }) {
 
       if (!response.ok) {
         const errorMessage = await response.json();
+        // console.error("Failed to assign medication to user:", errorMessage.error);
         throw new Error(errorMessage.error);
       }
       const data = await response.json();
       console.log(data.message);
       Alert.alert("Success", "Medication assigned successfully");
-      navigation.goBack(); 
+      navigation.goBack(); // <-- Navigate back to the previous screen
     } catch (error) {
+      // console.error("Error assigning medication to user:", error.message);
       Alert.alert("Error", `Failed to assign medication: ${error.message}`);
     }
   };
@@ -117,18 +119,18 @@ export default function Manage({ route, navigation }) {
   );
 }
 
-
+// Your StyleSheet remains unchanged
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 20, 
-    paddingHorizontal: 10, 
+    paddingVertical: 20, // Adjust vertical padding
+    paddingHorizontal: 10, // Adjust horizontal padding
     alignItems: "center",
     justifyContent: "center",
   },
   header: {
-    marginBottom: 20, 
+    marginBottom: 20, // Add margin bottom to the header
   },
   main: {
     flex: 1,
@@ -141,7 +143,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontStyle: "italic",
-    textAlign: "center", 
+    textAlign: "center", // Center the text
   },
   medicationButton: {
     backgroundColor: "#DDDDDD",
@@ -150,11 +152,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
 
     alignItems: "center",
-    width: "45%",
+    width: "45%", // Set width for two-column layout
     borderWidth: 2,
     borderRadius: 12,
-    height: 70, 
-    justifyContent: "center", 
+    height: 70, // Set a fixed height to make all buttons the same size
+    justifyContent: "center", // Center content vertically
   },
   medicationText: {
     textAlign: "center",
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
   },
   brandName: {
     fontSize: 14,
-    color: "#333", 
+    color: "#333", // Subtle text for brand name
     marginTop: 2,
     fontStyle: "italic",
   },
