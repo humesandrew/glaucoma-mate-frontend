@@ -13,10 +13,11 @@ import {
 import Footer from "../components/Footer.js";
 
 export default function Doses({ route, navigation }) {
-  const { authToken } = route.params || {};
+  // const { authToken } = route.params || {};
   const { logout } = useLogout();
   const [medications, setMedications] = useState([]); // Initialize medications state
-  const { user } = useAuthContext(); // Access user data from AuthContext
+  const { user } = useAuthContext(); // Access user from AuthContext
+const authToken = user?.authToken; // Access user data from AuthContext
 
   const handleLogout = async () => {
     await logout(); // Call the logout function
@@ -249,7 +250,7 @@ export default function Doses({ route, navigation }) {
           </View>
         ))}
       </ScrollView>
-      <Footer authToken={authToken} />
+      <Footer authToken={authToken}/>
     </View>
   );
 }

@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuthContext } from "../hooks/useAuthContext.js";
-import { useNavigation } from "@react-navigation/native";
 import Auth from "../screens/Auth.js";
 import Doses from "../screens/Doses.js";
 import Manage from "../screens/Manage.js";
@@ -13,15 +12,20 @@ const Stack = createNativeStackNavigator();
 
 const HomeStack = () => {
   const { user, dispatch } = useAuthContext();
-  const navigation = useNavigation();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true); 
 
   useEffect(() => {
+    console.log("HomeStack: Starting auth state check");
+
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+      console.log("HomeStack: Firebase auth state changed. User:", firebaseUser);
+
       if (firebaseUser) {
         try {
           const token = await getIdToken(firebaseUser, true);
-          console.log("HomeStack token:", token);
-  
+          console.log("HomeStack: Firebase token fetched:", token);
+
+          // Send token to backend for verification
           const response = await fetch(
             "https://glaucoma-mate-backend.onrender.com/api/user/login",
             {
@@ -32,40 +36,59 @@ const HomeStack = () => {
               },
             }
           );
-  
+
+          console.log("HomeStack: Backend response status:", response.status);
+
           if (response.ok) {
             const userData = await response.json();
-            console.log("Fetched userData:", userData);
-  
+            console.log("HomeStack: Fetched userData from backend:", userData);
+
+            // Update user state in AuthContext
             dispatch({
               type: "LOGIN",
               payload: { ...userData, authToken: token },
             });
-  
-            // Navigate only if the user is successfully synchronized
-            navigation.navigate("Doses", { authToken: token });
           } else {
-            console.error("Failed to synchronize with backend:", response.statusText);
-            const errData = await response.json();
-            console.error("Error details:", errData.error);
+            console.error(
+              "HomeStack: Backend failed to validate token. Response:",
+              await response.text()
+            );
+            throw new Error("Unauthorized - Token validation failed");
           }
         } catch (error) {
-          console.error("Error in token synchronization:", error.message);
+          console.error("HomeStack: Error during token synchronization:", error.message);
+          dispatch({ type: "LOGOUT" });
         }
       } else {
+        console.log("HomeStack: No Firebase user found, dispatching LOGOUT");
         dispatch({ type: "LOGOUT" });
-        navigation.navigate("Login");
       }
+
+      setIsCheckingAuth(false); 
     });
-  
-    return () => unsubscribe();
-  }, [dispatch, navigation]);
-  
+
+    return () => {
+      console.log("HomeStack: Cleaning up auth state listener");
+      unsubscribe();
+    };
+  }, [dispatch]);
+
+  if (isCheckingAuth) {
+    console.log("HomeStack: Checking authentication, returning loading state");
+    return null; // You can replace this with a loading spinner
+  }
+
+  console.log("HomeStack: Rendering Stack.Navigator. Current user:", user);
+
   return (
     <Stack.Navigator>
-      {!user ? ( // Only show the login and signup screens if the user is not logged in
+      {!user ? (
         <>
-          <Stack.Screen name="Login" component={Auth} />
+          <Stack.Screen
+            name="Login"
+            component={Auth}
+            options={{ headerShown: true, title: "Login" }}
+          />
           <Stack.Screen
             name="Signup"
             component={Signup}
