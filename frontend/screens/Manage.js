@@ -10,11 +10,13 @@ import {
   Alert,
 } from "react-native";
 import Footer from "../components/Footer.js";
+import NotificationModal from "../components/NotificationModal.js";
 
 export default function Manage({ route, navigation }) {
   const { authToken } = route.params || {}; // <-- Accept refreshMedications callback
   const { user } = useAuthContext();
   const [allMedications, setAllMedications] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchAllMedications = async () => {
@@ -44,8 +46,13 @@ export default function Manage({ route, navigation }) {
   const handleMedicationPress = async (medicationId) => {
     console.log("handleMedicationPress function called");
     console.log("Medication ID:", medicationId);
-    console.log("User ID:", user ? user.firebaseUid : null); // Ensure this matches your backend expectation
-
+    console.log("User ID:", user ? user.firebaseUid : null);
+  
+    // Store the selected medication ID
+    setSelectedMedicationId(medicationId);
+  
+    // Open the modal
+    setModalVisible(true);
     try {
       const requestBody = {
         medicationId,
@@ -113,6 +120,10 @@ export default function Manage({ route, navigation }) {
             )}
           />
         </View>
+        <NotificationModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+        />
         <Footer authToken={authToken} />
       </View>
     </TouchableWithoutFeedback>
