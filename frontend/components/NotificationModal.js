@@ -3,12 +3,13 @@ import { Modal, View, Text, StyleSheet, Button } from "react-native";
 
 export default function NotificationModal({ onClose, visible }) {
   console.log("NotificationModal rendered. Visible:", visible);
+
   return (
     <Modal
       animationType="slide"
-      transparent="true"
-      visible="visible"
-      onRequestClose={onClose} // Android back button support
+      transparent={true} // ✅ Fix: Boolean value, not a string
+      visible={visible} // ✅ Fix: Use the actual `visible` prop
+      onRequestClose={onClose} // ✅ Fix: Handle Android back button
     >
       <View style={styles.modalBackground}>
         <View style={styles.modalContainer}>
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // ✅ Semi-transparent background
   },
   modalContainer: {
     width: 300,
