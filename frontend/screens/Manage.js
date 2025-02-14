@@ -17,6 +17,8 @@ export default function Manage({ route, navigation }) {
   const { user } = useAuthContext();
   const [allMedications, setAllMedications] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedMedicationId, setSelectedMedicationId] = useState(null);
+
 
   useEffect(() => {
     const fetchAllMedications = async () => {
@@ -52,6 +54,7 @@ export default function Manage({ route, navigation }) {
     setSelectedMedicationId(medicationId);
   
     // Open the modal
+    console.log("Opening modal for:", medicationId);
     setModalVisible(true);
     try {
       const requestBody = {
@@ -122,6 +125,7 @@ export default function Manage({ route, navigation }) {
         </View>
         <NotificationModal
           visible={modalVisible}
+          medicationId={selectedMedicationId}
           onClose={() => setModalVisible(false)}
         />
         <Footer authToken={authToken} />
