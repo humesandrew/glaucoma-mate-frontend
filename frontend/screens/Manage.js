@@ -45,23 +45,24 @@ export default function Manage({ route, navigation }) {
     fetchAllMedications();
   }, [authToken]);
 
-  const handleMedicationPress = async (medicationId) => {
+  const handleMedicationPress = (medicationId) => {
     console.log("handleMedicationPress function called");
     console.log("Medication ID:", medicationId);
     console.log("User ID:", user ? user.firebaseUid : null);
   
-    // Store the selected medication ID
+    // Store the selected medication ID and open modal
     setSelectedMedicationId(medicationId);
-  
-    // Open the modal
-    console.log("Opening modal for:", medicationId);
     setModalVisible(true);
+  };
+  
+  // API call now only happens when user confirms
+  const assignMedication = async (medicationId) => {
     try {
       const requestBody = {
         medicationId,
-        userId: user.firebaseUid || "", // Make sure you're using firebaseUid or the correct user identifier
+        userId: user.firebaseUid || "",
       };
-
+  
       const requestOptions = {
         method: "POST",
         headers: {
@@ -70,27 +71,28 @@ export default function Manage({ route, navigation }) {
         },
         body: JSON.stringify(requestBody),
       };
-
+  
       const response = await fetch(
         "https://glaucoma-mate-backend.onrender.com/api/medications/assign",
         requestOptions
       );
-      console.log("response status:", response.status);
-
+  
+      console.log("Response status:", response.status);
+  
       if (!response.ok) {
         const errorMessage = await response.json();
-        // console.error("Failed to assign medication to user:", errorMessage.error);
         throw new Error(errorMessage.error);
       }
+  
       const data = await response.json();
       console.log(data.message);
       Alert.alert("Success", "Medication assigned successfully");
-      navigation.goBack(); // <-- Navigate back to the previous screen
+      navigation.goBack();
     } catch (error) {
-      // console.error("Error assigning medication to user:", error.message);
       Alert.alert("Error", `Failed to assign medication: ${error.message}`);
     }
   };
+  
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -127,6 +129,7 @@ export default function Manage({ route, navigation }) {
           visible={modalVisible}
           medicationId={selectedMedicationId}
           onClose={() => setModalVisible(false)}
+          // this will be onConfirm={assignMedication} //
         />
         <Footer authToken={authToken} />
       </View>

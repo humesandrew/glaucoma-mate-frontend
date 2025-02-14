@@ -1,25 +1,29 @@
 import React from "react";
 import { Modal, View, Text, StyleSheet, Button } from "react-native";
 
-export default function NotificationModal({ onClose, visible }) {
+export default function NotificationModal({ onClose, visible, medicationId, onConfirm }) {
   console.log("NotificationModal rendered. Visible:", visible);
 
+  const handleConfirm = () => {
+    console.log("User confirmed medication:", medicationId);
+    onConfirm(medicationId); // Call parent function to handle API
+    onClose(); // Close the modal
+  };
+
   return (
-    <Modal
-      animationType="slide"
-      transparent={true} // ✅ Fix: Boolean value, not a string
-      visible={visible} // ✅ Fix: Use the actual `visible` prop
-      onRequestClose={onClose} // ✅ Fix: Handle Android back button
-    >
+    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
       <View style={styles.modalBackground}>
         <View style={styles.modalContainer}>
-          <Text style={styles.modalText}>This is a modal.</Text>
-          <Button title="Close" onPress={onClose} />
+          <Text style={styles.modalText}>Set up your notification time</Text>
+          {/* Future: Notification Time Picker goes here */}
+          <Button title="Confirm" onPress={handleConfirm} />
+          <Button title="Cancel" onPress={onClose} />
         </View>
       </View>
     </Modal>
   );
 }
+
 
 const styles = StyleSheet.create({
   modalBackground: {
