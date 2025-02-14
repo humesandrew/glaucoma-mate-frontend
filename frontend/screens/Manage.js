@@ -17,7 +17,8 @@ export default function Manage({ route, navigation }) {
   const { user } = useAuthContext();
   const [allMedications, setAllMedications] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedMedicationId, setSelectedMedicationId] = useState(null);
+  const [selectedMedication, setSelectedMedication] = useState(null);
+
 
 
   useEffect(() => {
@@ -45,13 +46,13 @@ export default function Manage({ route, navigation }) {
     fetchAllMedications();
   }, [authToken]);
 
-  const handleMedicationPress = (medicationId) => {
+  const handleMedicationPress = (medication) => {
     console.log("handleMedicationPress function called");
-    console.log("Medication ID:", medicationId);
+    console.log("Medication ID:", medication._id);
     console.log("User ID:", user ? user.firebaseUid : null);
   
     // Store the selected medication ID and open modal
-    setSelectedMedicationId(medicationId);
+    setSelectedMedication(medication)
     setModalVisible(true);
   };
   
@@ -108,7 +109,7 @@ export default function Manage({ route, navigation }) {
             numColumns={2}
             renderItem={({ item, index }) => (
               <TouchableOpacity
-                onPress={() => handleMedicationPress(item._id)}
+                onPress={() => handleMedicationPress(item)}
                 style={[
                   styles.medicationButton,
                   {
@@ -127,7 +128,7 @@ export default function Manage({ route, navigation }) {
         </View>
         <NotificationModal
           visible={modalVisible}
-          medicationId={selectedMedicationId}
+          medication={selectedMedication}
           onClose={() => setModalVisible(false)}
           // this will be onConfirm={assignMedication} //
         />

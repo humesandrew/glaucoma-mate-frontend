@@ -1,28 +1,24 @@
 import React from "react";
 import { Modal, View, Text, StyleSheet, Button } from "react-native";
 
-export default function NotificationModal({ onClose, visible, medicationId, onConfirm }) {
-  console.log("NotificationModal rendered. Visible:", visible);
-
-  const handleConfirm = () => {
-    console.log("User confirmed medication:", medicationId);
-    onConfirm(medicationId); // Call parent function to handle API
-    onClose(); // Close the modal
-  };
+export default function NotificationModal({ visible, medication, onClose, onConfirm }) {
+  console.log("NotificationModal received medication:", medication);
 
   return (
-    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" transparent={true}>
       <View style={styles.modalBackground}>
         <View style={styles.modalContainer}>
-          <Text style={styles.modalText}>Set up your notification time</Text>
-          {/* Future: Notification Time Picker goes here */}
-          <Button title="Confirm" onPress={handleConfirm} />
+          <Text style={styles.modalText}>
+            Add Medication: {medication?.name || "Unknown"}?
+          </Text>
+          <Button title="Confirm" onPress={() => onConfirm(medication)} />
           <Button title="Cancel" onPress={onClose} />
         </View>
       </View>
     </Modal>
   );
 }
+
 
 
 const styles = StyleSheet.create({
