@@ -31,7 +31,8 @@
     "react-native-svg": "15.8.0",
     "react-native-web": "~0.19.10",
     "react-navigation": "^4.4.4",
-    "undici": "^7.0.0"
+    "undici": "^7.0.0",
+    "expo-notifications": "~0.29.13"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

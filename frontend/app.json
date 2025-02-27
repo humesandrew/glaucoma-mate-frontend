@@ -17,7 +17,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.humesandrew.glaucomamatefrontend"
+      "bundleIdentifier": "com.humesandrew.glaucomamatefrontend",
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"],
+        "NSUserTrackingUsageDescription": "This identifier will be used to send you notifications about your glaucoma medications."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -36,7 +40,14 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/glaucomabuddylogo.png",
+          "color": "#ffffff"
+        }
+      ]
     ]
   }
 }
