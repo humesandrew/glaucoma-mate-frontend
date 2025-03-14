@@ -34,6 +34,14 @@
       "favicon": "./assets/glaucomabuddylogo.png"
     },
     "extra": {
+        "firebase": {
+          "apiKey": "AIzaSyAts5SVgRfuCSV3kXNFOjWPsPd5hfX-TYY",
+          "authDomain": "glaucoma-mate-firebase.firebaseapp.com",
+          "projectId": "glaucoma-mate-firebase",
+          "storageBucket": "glaucoma-mate-firebase.appspot.com",
+          "messagingSenderId": "873501986644",
+          "appId": "1:873501986644:web:f075df3eb22c62a7c442c1"
+        },
       "eas": {
         "projectId": "6522e1ff-cbea-45da-862b-bb6788b2168e"
       }
