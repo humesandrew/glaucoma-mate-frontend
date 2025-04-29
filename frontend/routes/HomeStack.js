@@ -1,18 +1,16 @@
+// HomeStack.js
 import React, { useEffect, useState } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useAuthContext } from "../hooks/useAuthContext.js";
-import Auth from "../screens/Auth.js";
-import Doses from "../screens/Doses.js";
-import Manage from "../screens/Manage.js";
-import Signup from "../screens/Signup.js";
-import { auth } from "../firebase";
+import { auth } from "../firebase.js";
 import { getIdToken } from "firebase/auth";
+import { useAuthContext } from "../hooks/useAuthContext.js";
 
-const Stack = createNativeStackNavigator();
+// ← NEW: your two smaller navigator modules
+import AuthNavigator from "./AuthNavigator.js";
+import AppNavigator  from "./AppNavigator.js";
 
 const HomeStack = () => {
   const { user, dispatch } = useAuthContext();
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true); 
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     console.log("HomeStack: Starting auth state check");
@@ -56,15 +54,20 @@ const HomeStack = () => {
             throw new Error("Unauthorized - Token validation failed");
           }
         } catch (error) {
-          console.error("HomeStack: Error during token synchronization:", error.message);
+          console.error(
+            "HomeStack: Error during token synchronization:",
+            error.message
+          );
           dispatch({ type: "LOGOUT" });
         }
       } else {
-        console.log("HomeStack: No Firebase user found, dispatching LOGOUT");
+        console.log(
+          "HomeStack: No Firebase user found, dispatching LOGOUT"
+        );
         dispatch({ type: "LOGOUT" });
       }
 
-      setIsCheckingAuth(false); 
+      setIsCheckingAuth(false);
     });
 
     return () => {
@@ -73,44 +76,20 @@ const HomeStack = () => {
     };
   }, [dispatch]);
 
+  // still block render until we've finished the above
   if (isCheckingAuth) {
-    console.log("HomeStack: Checking authentication, returning loading state");
-    return null; // You can replace this with a loading spinner
+    console.log(
+      "HomeStack: Checking authentication, returning loading state"
+    );
+    return null; // you can show a spinner here
   }
 
-  console.log("HomeStack: Rendering Stack.Navigator. Current user:", user);
+  console.log("HomeStack: Rendering appropriate Navigator. Current user:", user);
 
-  return (
-    <Stack.Navigator>
-      {!user ? (
-        <>
-          <Stack.Screen
-            name="Login"
-            component={Auth}
-            options={{ headerShown: true, title: "Login" }}
-          />
-          <Stack.Screen
-            name="Signup"
-            component={Signup}
-            options={{ headerShown: true, title: "Signup" }}
-          />
-        </>
-      ) : (
-        <>
-          <Stack.Screen
-            name="Doses"
-            component={Doses}
-            options={{ headerShown: true, title: "Track your doses" }}
-          />
-          <Stack.Screen
-            name="Manage"
-            component={Manage}
-            options={{ headerShown: true, title: "Manage medications" }}
-          />
-        </>
-      )}
-    </Stack.Navigator>
-  );
+  // ← NEW: pick one of your navigators
+  return user
+  ? <AppNavigator key="app" />
+  : <AuthNavigator key="auth" />;
 };
 
 export default HomeStack;
