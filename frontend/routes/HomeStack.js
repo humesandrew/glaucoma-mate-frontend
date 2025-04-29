@@ -1,12 +1,9 @@
-// HomeStack.js
 import React, { useEffect, useState } from "react";
 import { auth } from "../firebase.js";
 import { getIdToken } from "firebase/auth";
 import { useAuthContext } from "../hooks/useAuthContext.js";
-
-// ← NEW: your two smaller navigator modules
 import AuthNavigator from "./AuthNavigator.js";
-import AppNavigator  from "./AppNavigator.js";
+import AppNavigator from "./AppNavigator.js";
 
 const HomeStack = () => {
   const { user, dispatch } = useAuthContext();
@@ -16,14 +13,16 @@ const HomeStack = () => {
     console.log("HomeStack: Starting auth state check");
 
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
-      console.log("HomeStack: Firebase auth state changed. User:", firebaseUser);
+      console.log(
+        "HomeStack: Firebase auth state changed. User:",
+        firebaseUser
+      );
 
       if (firebaseUser) {
         try {
           const token = await getIdToken(firebaseUser, true);
           console.log("HomeStack: Firebase token fetched:", token);
 
-          // Send token to backend for verification
           const response = await fetch(
             "https://glaucoma-mate-backend.onrender.com/api/user/login",
             {
@@ -41,7 +40,6 @@ const HomeStack = () => {
             const userData = await response.json();
             console.log("HomeStack: Fetched userData from backend:", userData);
 
-            // Update user state in AuthContext
             dispatch({
               type: "LOGIN",
               payload: { ...userData, authToken: token },
@@ -61,9 +59,7 @@ const HomeStack = () => {
           dispatch({ type: "LOGOUT" });
         }
       } else {
-        console.log(
-          "HomeStack: No Firebase user found, dispatching LOGOUT"
-        );
+        console.log("HomeStack: No Firebase user found, dispatching LOGOUT");
         dispatch({ type: "LOGOUT" });
       }
 
@@ -76,20 +72,17 @@ const HomeStack = () => {
     };
   }, [dispatch]);
 
-  // still block render until we've finished the above
   if (isCheckingAuth) {
-    console.log(
-      "HomeStack: Checking authentication, returning loading state"
-    );
+    console.log("HomeStack: Checking authentication, returning loading state");
     return null; // you can show a spinner here
   }
 
-  console.log("HomeStack: Rendering appropriate Navigator. Current user:", user);
+  console.log(
+    "HomeStack: Rendering appropriate Navigator. Current user:",
+    user
+  );
 
-  // ← NEW: pick one of your navigators
-  return user
-  ? <AppNavigator key="app" />
-  : <AuthNavigator key="auth" />;
+  return user ? <AppNavigator key="app" /> : <AuthNavigator key="auth" />;
 };
 
 export default HomeStack;
