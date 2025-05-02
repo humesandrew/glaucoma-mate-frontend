@@ -9,6 +9,7 @@ import {
   FlatList,
   Alert,
 } from "react-native";
+import * as Notifications from "expo-notifications"
 import Footer from "../components/Footer.js";
 import NotificationModal from "../components/NotificationModal.js";
 
@@ -93,6 +94,36 @@ export default function Manage({ route, navigation }) {
       Alert.alert("Error", `Failed to assign medication: ${error.message}`);
     }
   };
+  const handleConfirm = async (medication, times) => {
+    // 1) Figure out “now”
+    const now = new Date();
+  
+    // 2) For each picked time, create a Date object at that hour/minute…
+    //    then if it’s already passed today, push it to tomorrow.
+    for (const time of times) {
+      const triggerDate = new Date(now);
+      triggerDate.setHours(time.getHours(), time.getMinutes(), 0, 0);
+      if (triggerDate <= now) {
+        triggerDate.setDate(triggerDate.getDate() + 1);
+      }
+  
+      // 3) Schedule exactly at that Date
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: `💊 Time for ${medication.name}`,
+          body: `Please take your ${medication.name} dose.`,
+          data: { medicationId: medication._id },
+        },
+        trigger: triggerDate,
+      });
+    }
+  
+    // 4) Now call your backend assignment API
+    await assignMedication(medication._id);
+  
+    // 5) Close the modal
+    setModalVisible(false);
+  };
   
 
   return (
@@ -130,6 +161,7 @@ export default function Manage({ route, navigation }) {
           visible={modalVisible}
           medication={selectedMedication}
           onClose={() => setModalVisible(false)}
+          onConfirm={handleConfirm}
           // this will be onConfirm={assignMedication} //
         />
         <Footer authToken={authToken} />
