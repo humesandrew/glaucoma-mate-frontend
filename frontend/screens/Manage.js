@@ -95,35 +95,35 @@ export default function Manage({ route, navigation }) {
     }
   };
   const handleConfirm = async (medication, times) => {
-    // 1) Figure out “now”
-    const now = new Date();
-  
-    // 2) For each picked time, create a Date object at that hour/minute…
-    //    then if it’s already passed today, push it to tomorrow.
-    for (const time of times) {
-      const triggerDate = new Date(now);
-      triggerDate.setHours(time.getHours(), time.getMinutes(), 0, 0);
-      if (triggerDate <= now) {
-        triggerDate.setDate(triggerDate.getDate() + 1);
+    try {
+      // 1) schedule a daily notification for each chosen time
+      for (let time of times) {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: `💊 Time for ${medication.name}`,
+            body:  `Please take your ${medication.name} dose.`,
+            data:  { medicationId: medication._id },
+          },
+          trigger: {
+            hour:    time.getHours(),   // fire at this hour…
+            minute:  time.getMinutes(), // …and this minute
+            repeats: true,              // every day
+          },
+        });
       }
   
-      // 3) Schedule exactly at that Date
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `💊 Time for ${medication.name}`,
-          body: `Please take your ${medication.name} dose.`,
-          data: { medicationId: medication._id },
-        },
-        trigger: triggerDate,
-      });
+      // 2) assign the medication on the backend
+      await assignMedication(medication._id);
+  
+      // 3) close the modal
+      setModalVisible(false);
+  
+    } catch (error) {
+      Alert.alert("Error", `Something went wrong: ${error.message}`);
     }
-  
-    // 4) Now call your backend assignment API
-    await assignMedication(medication._id);
-  
-    // 5) Close the modal
-    setModalVisible(false);
   };
+  
+  
   
 
   return (
