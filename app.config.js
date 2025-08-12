@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "glaucoma-mate-frontend",
     slug: "glaucoma-mate-frontend",
-    version: "1.0.2",
+    version: "1.0.3",
     orientation: "portrait",
     icon: "./assets/glaucomabuddylogo.png",
     userInterfaceStyle: "light",
