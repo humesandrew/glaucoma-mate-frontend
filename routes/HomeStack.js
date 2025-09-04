@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { auth } from "../firebase.js";
 import { getIdToken } from "firebase/auth";
 import { useAuthContext } from "../hooks/useAuthContext.js";
@@ -11,76 +10,76 @@ const HomeStack = () => {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
-    console.warn("[HomeStack] mount: starting auth check");
-    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
-      console.warn("[HomeStack] onAuthStateChanged:", firebaseUser);
-      (async () => {
-        if (firebaseUser) {
-          try {
-            const token = await getIdToken(firebaseUser, true);
-            console.warn("[HomeStack] token:", token);
+    console.log("HomeStack: Starting auth state check");
 
-            const res = await fetch(
-              "https://glaucoma-mate-backend.onrender.com/api/user/login",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-            console.warn("[HomeStack] backend status:", res.status);
-            if (!res.ok) {
-              const text = await res.text();
-              throw new Error(`Backend error: ${text}`);
+    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+      console.log("HomeStack: Firebase auth state changed. User:", firebaseUser);
+
+      if (firebaseUser) {
+        try {
+          const token = await getIdToken(firebaseUser, true);
+          console.log("HomeStack: Firebase token fetched:", token);
+
+          const response = await fetch(
+            "https://glaucoma-mate-backend.onrender.com/api/user/login",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
             }
-            const userData = await res.json();
-            console.warn("[HomeStack] backend userData:", userData);
-            dispatch({ type: "LOGIN", payload: { ...userData, authToken: token } });
-          } catch (err) {
-            console.error("[HomeStack] sync error:", err);
-            dispatch({ type: "LOGOUT" });
+          );
+
+          console.log("HomeStack: Backend response status:", response.status);
+
+          if (response.ok) {
+            const userData = await response.json();
+            console.log("HomeStack: Fetched userData from backend:", userData);
+
+            dispatch({
+              type: "LOGIN",
+              payload: { ...userData, authToken: token },
+            });
+          } else {
+            console.error(
+              "HomeStack: Backend failed to validate token. Response:",
+              await response.text()
+            );
+            throw new Error("Unauthorized - Token validation failed");
           }
-        } else {
-          console.warn("[HomeStack] no firebase user, logging out");
+        } catch (error) {
+          console.error(
+            "HomeStack: Error during token synchronization:",
+            error.message
+          );
           dispatch({ type: "LOGOUT" });
         }
-        setIsCheckingAuth(false);
-      })();
+      } else {
+        console.log("HomeStack: No Firebase user found, dispatching LOGOUT");
+        dispatch({ type: "LOGOUT" });
+      }
+
+      setIsCheckingAuth(false);
     });
+
     return () => {
-      console.warn("[HomeStack] unmount: unsubscribing");
+      console.log("HomeStack: Cleaning up auth state listener");
       unsubscribe();
     };
   }, [dispatch]);
 
   if (isCheckingAuth) {
-    console.warn("[HomeStack] rendering loading spinner");
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
-    );
+    console.log("HomeStack: Checking authentication, returning loading state");
+    return null; // you can show a spinner here, but keeping as-is per your request
   }
 
-  console.warn("[HomeStack] rendering navigator, user=", user);
-  return user ? <AppNavigator /> : <AuthNavigator />;
-};
+  console.log(
+    "HomeStack: Rendering appropriate Navigator. Current user:",
+    user
+  );
 
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: "#333",
-  },
-});
+  return user ? <AppNavigator key="app" /> : <AuthNavigator key="auth" />;
+};
 
 export default HomeStack;
