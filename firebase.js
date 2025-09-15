@@ -8,7 +8,7 @@ import {
   indexedDBLocalPersistence,
 } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Platform } from "react-native";
+import { Platform, Alert } from "react-native";
 
 // ✅ Use process.env directly since EAS injects vars from eas.json
 const firebaseConfig = {
@@ -24,7 +24,16 @@ console.log("🔥 Firebase Config:", firebaseConfig); // ✅ Expect full keys he
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
+// 🔔 TEMP: Show which Firebase project this TestFlight build is using
+try {
+  const { projectId, apiKey } = getApp().options || {};
+  Alert.alert(
+    "Firebase Config",
+    `projectId: ${projectId || "N/A"}\napiKey: ${(apiKey || "").slice(0, 8)}...`
+  );
+} catch (e) {
+  Alert.alert("Firebase Config", `Unable to read config: ${String(e)}`);
+}
 // Conditional persistence
 let auth;
 if (Platform.OS === "web") {
