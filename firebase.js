@@ -1,6 +1,6 @@
 // firebase.js
 
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApp } from "firebase/app";
 import {
   getAuth,
   initializeAuth,
