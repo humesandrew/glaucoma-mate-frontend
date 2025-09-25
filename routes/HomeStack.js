@@ -17,7 +17,7 @@ const HomeStack = () => {
 
       if (firebaseUser) {
         try {
-          const token = await getIdToken(firebaseUser, true);
+          const token = await getIdToken(firebaseUser, false);
           console.log("HomeStack: Firebase token fetched:", token);
 
           const response = await fetch(
