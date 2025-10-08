@@ -22,8 +22,6 @@ console.log("🔥 Firebase Config:", firebaseConfig);
 
 const app = initializeApp(firebaseConfig);
 
-
-import { Alert } from "react-native";
 Alert.alert(
   "Firebase",
   `projectId=${firebaseConfig.projectId || "MISSING"}\napiKey=${firebaseConfig.apiKey ? firebaseConfig.apiKey.slice(0,8)+"…" : "MISSING"}`
