@@ -7,7 +7,7 @@ import {
   indexedDBLocalPersistence,
 } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Platform } from "react-native";
+import { Platform, Alert } from "react-native";
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -22,6 +22,12 @@ console.log("🔥 Firebase Config:", firebaseConfig);
 
 const app = initializeApp(firebaseConfig);
 
+
+import { Alert } from "react-native";
+Alert.alert(
+  "Firebase",
+  `projectId=${firebaseConfig.projectId || "MISSING"}\napiKey=${firebaseConfig.apiKey ? firebaseConfig.apiKey.slice(0,8)+"…" : "MISSING"}`
+);
 let auth;
 if (Platform.OS === "web") {
   auth = getAuth(app);
