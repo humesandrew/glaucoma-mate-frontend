@@ -5,6 +5,20 @@ import { useAuthContext } from "../hooks/useAuthContext.js";
 import AuthNavigator from "./AuthNavigator.js";
 import AppNavigator from "./AppNavigator.js";
 
+const API_BASE = "https://glaucoma-mate-backend.onrender.com";
+
+// Minimal wake-up fetch: HEAD / (short timeout); ignore errors.
+async function warmBackend() {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 600); // ~0.6s cap
+    await fetch(`${API_BASE}/`, { method: "HEAD", signal: controller.signal, cache: "no-store" });
+    clearTimeout(timer);
+  } catch (_) {
+    // Intentionally ignore — this is just a warm-up.
+  }
+}
+
 const HomeStack = () => {
   const { user, dispatch } = useAuthContext();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -17,19 +31,20 @@ const HomeStack = () => {
 
       if (firebaseUser) {
         try {
+          // 🔸 Wake backend (handles Render cold start) — no auth, quick timeout.
+          await warmBackend();
+
+          // Keep your existing non-forced token fetch.
           const token = await getIdToken(firebaseUser, false);
           console.log("HomeStack: Firebase token fetched:", token);
 
-          const response = await fetch(
-            "https://glaucoma-mate-backend.onrender.com/api/user/login",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          const response = await fetch(`${API_BASE}/api/user/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
           console.log("HomeStack: Backend response status:", response.status);
 
@@ -71,13 +86,10 @@ const HomeStack = () => {
 
   if (isCheckingAuth) {
     console.log("HomeStack: Checking authentication, returning loading state");
-    return null; // you can show a spinner here, but keeping as-is per your request
+    return null; // keeping as-is
   }
 
-  console.log(
-    "HomeStack: Rendering appropriate Navigator. Current user:",
-    user
-  );
+  console.log("HomeStack: Rendering appropriate Navigator. Current user:", user);
 
   return user ? <AppNavigator key="app" /> : <AuthNavigator key="auth" />;
 };
