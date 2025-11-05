@@ -12,10 +12,25 @@ async function warmBackend() {
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 600); // ~0.6s cap
-    await fetch(`${API_BASE}/`, { method: "HEAD", signal: controller.signal, cache: "no-store" });
+    await fetch(`${API_BASE}/`, {
+      method: "HEAD",
+      signal: controller.signal,
+      cache: "no-store",
+    });
     clearTimeout(timer);
   } catch (_) {
     // Intentionally ignore — this is just a warm-up.
+  }
+}
+
+// Small helper with a per-request timeout so a hung network doesn't block UI.
+async function fetchWithTimeout(url, options = {}, ms = 5000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(id);
   }
 }
 
@@ -31,20 +46,33 @@ const HomeStack = () => {
 
       if (firebaseUser) {
         try {
-          // 🔸 Wake backend (handles Render cold start) — no auth, quick timeout.
+          // Wake backend (Render cold start)
           await warmBackend();
 
-          // Keep your existing non-forced token fetch.
-          const token = await getIdToken(firebaseUser, false);
-          console.log("HomeStack: Firebase token fetched:", token);
+          // 1) Try with the current (cached) token
+          let token = await getIdToken(firebaseUser, false);
+          console.log("HomeStack: Firebase token fetched (cached).");
 
-          const response = await fetch(`${API_BASE}/api/user/login`, {
+          let response = await fetchWithTimeout(`${API_BASE}/api/user/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           });
+
+          // 2) If token is expired/invalid, refresh once and retry
+          if (response.status === 401) {
+            console.warn("HomeStack: 401 from backend — refreshing token once.");
+            token = await getIdToken(firebaseUser, true); // force refresh
+            response = await fetchWithTimeout(`${API_BASE}/api/user/login`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            });
+          }
 
           console.log("HomeStack: Backend response status:", response.status);
 
@@ -57,17 +85,14 @@ const HomeStack = () => {
               payload: { ...userData, authToken: token },
             });
           } else {
-            console.error(
-              "HomeStack: Backend failed to validate token. Response:",
-              await response.text()
-            );
+            // Bubble up detailed backend text for your logs
+            const body = await response.text();
+            console.error("HomeStack: Backend auth failed:", body);
             throw new Error("Unauthorized - Token validation failed");
           }
         } catch (error) {
-          console.error(
-            "HomeStack: Error during token synchronization:",
-            error.message
-          );
+          console.error("HomeStack: Error during token sync:", error?.message || String(error));
+          // Keep your existing behavior
           dispatch({ type: "LOGOUT" });
         }
       } else {
@@ -86,11 +111,10 @@ const HomeStack = () => {
 
   if (isCheckingAuth) {
     console.log("HomeStack: Checking authentication, returning loading state");
-    return null; // keeping as-is
+    return null; // unchanged
   }
 
   console.log("HomeStack: Rendering appropriate Navigator. Current user:", user);
-
   return user ? <AppNavigator key="app" /> : <AuthNavigator key="auth" />;
 };
 
