@@ -40,36 +40,41 @@ export default function NotificationModal({ onClose, visible, medication, onConf
   };
 
   const handleConfirm = async () => {
-    const ok = await ensurePermissions();
-    if (!ok) return;
+  const ok = await ensurePermissions();
+  if (!ok) return;
 
-    // Optional: clear existing schedules
-    await Notifications.cancelAllScheduledNotificationsAsync();
-
+  for (const time of selectedTimes) {
     const now = new Date();
 
-    for (const time of selectedTimes) {
-      let hour = time.getHours();
-      let minute = time.getMinutes();
-   
+    // Next occurrence: today at selected HH:MM
+    const next = new Date(now);
+    next.setHours(time.getHours(), time.getMinutes(), 0, 0);
 
-      // If the chosen time equals the current hour:minute, bump 1 minute to avoid an immediate fire today
-      if (hour === now.getHours() && minute === now.getMinutes()) {
-        minute = (minute + 1) % 60;
-        if (minute === 0) hour = (hour + 1) % 24;
-      }
+    // If that time is already past (or exactly now), move to tomorrow
+    if (next <= now) next.setDate(next.getDate() + 1);
 
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Time for ${medication.name}`,
-          body: `Take your dose now`,
-        },
-        trigger: {
-          hour,
-          minute,
-          repeats: true, // daily at the same time
-        },
-      });
+    // 1) First upcoming reminder (one-time)
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `Time for ${medication.name}`,
+        body: `Take your dose now`,
+      },
+      trigger: next,
+    });
+
+  // 2) schedule daily repeating notifications at HH:MM
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: `Time for ${medication.name}`,
+      body: `Take your dose now`,
+    },
+    trigger: {
+      hour: time.getHours(),
+      minute: time.getMinutes(),
+      repeats: true,
+    },
+  });
+
     }
 
     // Propagate confirm event (e.g., save to backend)
