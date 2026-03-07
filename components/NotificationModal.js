@@ -51,7 +51,7 @@ export default function NotificationModal({ onClose, visible, medication, onConf
     for (const time of selectedTimes) {
       let hour = time.getHours();
       let minute = time.getMinutes();
-      let second = 0;
+   
 
       // If the chosen time equals the current hour:minute, bump 1 minute to avoid an immediate fire today
       if (hour === now.getHours() && minute === now.getMinutes()) {
@@ -67,7 +67,6 @@ export default function NotificationModal({ onClose, visible, medication, onConf
         trigger: {
           hour,
           minute,
-          second, // keep at :00 for consistency
           repeats: true, // daily at the same time
         },
       });
