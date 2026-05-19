@@ -47,7 +47,7 @@ const HomeStack = () => {
           await warmBackend();
 
           // 1) Try with cached token
-          let token = await getIdToken(firebaseUser, false);
+          let token = await getIdToken(firebaseUser, true);
           let response = await fetchWithTimeout(`${API_BASE}/api/user/login`, {
             method: "POST",
             headers: {
